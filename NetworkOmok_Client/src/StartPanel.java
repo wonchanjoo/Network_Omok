@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -85,8 +86,8 @@ public class StartPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String userName = userNameInput.getText().trim();
-			if(userName.equals("")) { // 이름이 입력이 안 됐으면
-				// 다이얼로그 보여주기?
+			if(userName.equals("")) { // 이름 입력이 안 됐으면
+				JOptionPane.showMessageDialog(null, "이름을 입력하세요!", "Message", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			String ip = ipInput.getText().trim();
