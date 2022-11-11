@@ -11,11 +11,11 @@ import java.net.Socket;
 
 import javax.swing.JPanel;
 
-public class WaitingRoomPanel extends JPanel {
+public class GamePanel extends JPanel {
 	private Container container;
 	private CardLayout cardLayout;
 	
-	private Socket socket; // 연결 소켓
+	private Socket socket;
 	private InputStream is;
 	private OutputStream os;
 	private DataInputStream dis;
@@ -23,7 +23,7 @@ public class WaitingRoomPanel extends JPanel {
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	
-	public WaitingRoomPanel(Container container, String userName, String ip_addr, String port_no) {
+	public GamePanel(Container container, String userName, String ip_addr, String port_no) {
 		this.container = container;
 		this.cardLayout = (CardLayout) container.getLayout();
 		

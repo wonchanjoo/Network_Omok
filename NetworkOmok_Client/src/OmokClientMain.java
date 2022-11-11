@@ -10,7 +10,6 @@ public class OmokClientMain extends JFrame {
 	private Container container;
 	
 	private StartPanel startPanel;
-	private WaitingRoomPanel waitingRoomPanel;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -36,10 +35,8 @@ public class OmokClientMain extends JFrame {
 		container.setLayout(cardLayout);
 		
 		startPanel = new StartPanel(container);
-		waitingRoomPanel = new WaitingRoomPanel(container);
 		
 		container.add(startPanel, "startPanel");
-		container.add(waitingRoomPanel, "waitingRoomPanel");
 		
 		this.setSize(1000, 600);
 		this.setLocation(500, 150);

@@ -16,6 +16,8 @@ public class StartPanel extends JPanel {
 	private Container container;
 	private CardLayout cardLayout;
 	
+	private WaitingRoomPanel waitingRoomPanel;
+	
 	private JTextField ipInput;
 	private JTextField portInput;
 	private JTextField userNameInput;
@@ -90,9 +92,16 @@ public class StartPanel extends JPanel {
 				JOptionPane.showMessageDialog(null, "이름을 입력하세요!", "Message", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			String ip = ipInput.getText().trim();
-			String port = portInput.getText().trim();
-			cardLayout.show(container, "waitingRoomPanel"); // 대기실 Panel로 변경
+			String ip_addr = ipInput.getText().trim();
+			String port_no = portInput.getText().trim();
+			
+//			waitingRoomPanel = new WaitingRoomPanel(container, userName, ip_addr, port_no);
+//			container.add(waitingRoomPanel, "waitingRoomPanel");
+//			cardLayout.show(container, "waitingRoomPanel"); // 대기실 Panel로 변경
+			
+			GamePanel gamePanel = new GamePanel(container, userName, ip_addr, port_no);
+			container.add(gamePanel, "gamePanel");
+			cardLayout.show(container, "gamePanel");
 		}
 	}
 }
