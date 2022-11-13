@@ -41,7 +41,7 @@ public class GamePanel extends JPanel {
 		JSplitPane omokPane = new JSplitPane();
 		this.add(omokPane, BorderLayout.CENTER);
 		omokPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		omokPane.setDividerLocation(550); // 650을 기준으로 나눈다(프레임 사이즈 가로 1000)
+		omokPane.setDividerLocation(550); // 550을 기준으로 나눈다(프레임 사이즈 가로 900)
 		omokPane.setEnabled(false); // 기준을 움직일 수 없도록
 		omokPane.setLeftComponent(new OmokPanel()); // 왼쪽에 OmokPanel
 		omokPane.setRightComponent(new ChatPanel()); // 오른쪽에 ChatPanel

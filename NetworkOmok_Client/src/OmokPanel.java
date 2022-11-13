@@ -40,12 +40,12 @@ public class OmokPanel extends JPanel {
 		resizeImg = img.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 		ImageIcon whiteStoneImg = new ImageIcon(resizeImg);
 		JLabel whiteStoneLabel = new JLabel(whiteStoneImg);
-		whiteStoneLabel.setBounds(300, 30, 50, 50);
+		whiteStoneLabel.setBounds(330, 30, 50, 50);
 		this.add(whiteStoneLabel);
 		
 		JLabel whitePlayerName = new JLabel("player2");
 		whitePlayerName.setFont(font);
-		whitePlayerName.setBounds(360, 30, 100, 50);
+		whitePlayerName.setBounds(390, 30, 100, 50);
 		this.add(whitePlayerName);
 	}
 }
