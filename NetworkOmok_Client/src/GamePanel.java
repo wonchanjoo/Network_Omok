@@ -1,4 +1,6 @@
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -10,6 +12,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+
 
 public class GamePanel extends JPanel {
 	private Container container;
@@ -23,20 +27,23 @@ public class GamePanel extends JPanel {
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	
-	public GamePanel(Container container, String userName, String ip_addr, String port_no) {
+	public GamePanel(Container container) {
+		this.setSize(900, 650);
+		this.setLayout(new BorderLayout());
+		this.setBackground(Color.YELLOW);
 		this.container = container;
 		this.cardLayout = (CardLayout) container.getLayout();
 		
-		// socket 생성
-		try {
-			socket = new Socket(ip_addr, Integer.parseInt(port_no));
-			
-			oos = new ObjectOutputStream(socket.getOutputStream());
-			oos.flush();
-			ois = new ObjectInputStream(socket.getInputStream());
-
-		} catch (NumberFormatException | IOException e) {
-			e.printStackTrace();
-		}
+		splitPane();
+	}
+	
+	public void splitPane() {
+		JSplitPane omokPane = new JSplitPane();
+		this.add(omokPane, BorderLayout.CENTER);
+		omokPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+		omokPane.setDividerLocation(550); // 650을 기준으로 나눈다(프레임 사이즈 가로 1000)
+		omokPane.setEnabled(false); // 기준을 움직일 수 없도록
+		omokPane.setLeftComponent(new OmokPanel()); // 왼쪽에 OmokPanel
+		omokPane.setRightComponent(new ChatPanel()); // 오른쪽에 ChatPanel
 	}
 }

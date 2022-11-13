@@ -38,7 +38,7 @@ public class OmokClientMain extends JFrame {
 		
 		container.add(startPanel, "startPanel");
 		
-		this.setSize(1000, 600);
+		this.setSize(900, 650);
 		this.setLocation(500, 150);
 		this.setResizable(false); // 사이즈를 조절할 수 없도록
 	}
