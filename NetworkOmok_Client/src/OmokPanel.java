@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.MouseInfo;
+import java.awt.PointerInfo;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -47,5 +49,6 @@ public class OmokPanel extends JPanel {
 		whitePlayerName.setFont(font);
 		whitePlayerName.setBounds(390, 30, 100, 50);
 		this.add(whitePlayerName);
+		
 	}
 }

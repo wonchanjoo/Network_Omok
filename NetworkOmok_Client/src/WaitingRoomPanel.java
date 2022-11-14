@@ -73,6 +73,7 @@ public class WaitingRoomPanel extends JPanel {
 				System.out.println(temp.UserName + " " + temp.code + " " + temp.data + " 전송");
 			}
 		} catch (Exception e) {
+<<<<<<< HEAD
 			System.out.println("sendObject error");
 		}
 	}
@@ -85,6 +86,9 @@ public class WaitingRoomPanel extends JPanel {
 			System.out.println(userName + " 400 " + message + " 전송");
 		} catch (Exception e) {
 			System.out.println("sendChatMessage error");
+=======
+			System.out.println("send error!");
+>>>>>>> 5089026cab725c6a817a5f2f8dd2350152d7b1f6
 		}
 	}
 	
@@ -119,6 +123,7 @@ public class WaitingRoomPanel extends JPanel {
 					case "200": 
 						break;
 					}
+					
 				} catch (IOException e) {
 					try {
 						ois.close();

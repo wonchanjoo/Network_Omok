@@ -1,6 +1,7 @@
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -36,8 +37,10 @@ public class OmokServer extends JFrame {
 	private ServerSocket socket; // 서버소켓
 	private Socket client_socket; // accept() 에서 생성된 client 소켓
 	private Vector UserVec = new Vector(); // 연결된 사용자를 저장할 벡터
-	private List<String> roomList; //현재 서버에 있는 방 리스트
+	private List<Room> roomList; //현재 서버에 있는 방 리스트
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
+
+	public int[][] board = new int[19][19];
 
 	/**
 	 * Launch the application.
@@ -141,7 +144,30 @@ public class OmokServer extends JFrame {
 		textArea.append("data = " + msg.data + "\n");
 		textArea.setCaretPosition(textArea.getText().length());
 	}
+	
+	class Room extends Thread {
+		public String roomName;
+		public int[][] board = new int[19][19];
+		public Vector player = new Vector();
+		public Vector viewer = new Vector();
+		
+		public Room(String roomName) {
+			this.roomName = roomName;
+			for (int i = 0; i < UserVec.size(); i++) {
+				UserService user = (UserService) UserVec.elementAt(i);
+				if(user.roomId == roomName && player.size() < 2) {
+					player.add(user);
+				}
+			}
+		}
+	}
 
+	public int getOmokX(int x) {
+		int omokX = 0;
+		if(x < 13) return 0;
+		return omokX;
+	}
+	
 	// User 당 생성되는 Thread
 	// Read One 에서 대기 -> Write All
 	class UserService extends Thread {
@@ -157,6 +183,8 @@ public class OmokServer extends JFrame {
 		private Vector user_vc;
 		public String UserName = "";
 		public String UserStatus;
+		public Vector player = new Vector();
+		public String roomId;
 
 		public UserService(Socket client_socket) {
 			// TODO Auto-generated constructor stub
@@ -365,8 +393,59 @@ public class OmokServer extends JFrame {
 						msg = String.format("[%s]님이 [%s]방을 만들었습니다.", cm.UserName, cm.data);
 						AppendText(msg); // server 화면에 출력
 						String[] args = msg.split(" "); // 단어들을 분리한다.
-						roomList.add(args[1]);
+						//roomList.add(args[1]);
+						roomList.add(new Room(args[1]));
+					}
+					else if(cm.code.matches("201")) { // 방 접속
+						msg = String.format("[%s]님이 [%s]방에 접속하셨습니다.", cm.UserName, cm.data);
+						AppendText(msg); // server 화면에 출력
+						int exist = 0;
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(cm.roomId.equals(user.roomId) && user.player.size() >= 2) {
+								AppendText("[" + cm.roomId + "]방이 꽉참!!");
+								exist=1;
+								ChatMsg obj = new ChatMsg("server", "202", "방이 꽉참");
+								oos.writeObject(obj);
+								break;
+							}
+						}
 						
+						if(exist==1) continue;
+						
+						this.player.add(this);
+						this.roomId = cm.roomId;
+						
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(user!=this && roomId.equals(user.roomId)) {
+								user.player.add(this);
+								this.player.add(user);
+							}
+						}
+						
+						if(this.player.size() == 2) {
+							ChatMsg obj = new ChatMsg("server", "300", "게임 시작!!");
+							//obj.player = cm.player;
+							for (int i = 0; i < user_vc.size(); i++) {
+								UserService user = (UserService) user_vc.elementAt(i);
+								if(roomId.equals(user.roomId)) {
+									user.oos.writeObject(obj);
+								}
+							}
+							AppendText("[" + roomId + "]방 게임 시작!!");
+							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + this.player.size());
+						}
+						else {
+							ChatMsg obj1 = new ChatMsg("server", "201", "다른 참가자가 들어올 때 까지 잠시만 기다려 주세요...");
+							//obj1.roomId = this.roomId;
+							//obj1.player.add(this);
+							oos.writeObject(obj1);
+							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + this.player.size());
+						}
+					}
+					else if (cm.code.matches("301")) {
+						int x = getOmokX(cm.mouse_e.getX());
 					}
 					else if (cm.code.matches("400")) { //chatting
 						msg = String.format("[%s] %s", cm.UserName, cm.data);
