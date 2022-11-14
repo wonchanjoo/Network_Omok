@@ -8,6 +8,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 public class ChatPanel extends JPanel{
 	private WaitingRoomPanel waitingRoomPanel;
@@ -61,6 +65,39 @@ public class ChatPanel extends JPanel{
 		this.add(abstentionBtn);
 	}
 	
+	// 채팅창 좌측에 메시지 출력
+	public void appendChatMessageLeft(String msg) {
+		msg = msg.trim(); // 앞 뒤 공백 제거
+		int len = textArea.getDocument().getLength();
+		StyledDocument doc = textArea.getStyledDocument();
+		SimpleAttributeSet left = new SimpleAttributeSet();
+		StyleConstants.setAlignment(left, StyleConstants.ALIGN_LEFT);
+		StyleConstants.setForeground(left, Color.BLACK);
+		doc.setParagraphAttributes(doc.getLength(), 1, left, false);
+		try {
+			doc.insertString(doc.getLength(), msg+"\n", left );
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		len = textArea.getDocument().getLength();
+		textArea.setCaretPosition(len);
+	}
+	// 채팅창 우측에 메시지 출력
+	public void appendChatMessageRight(String msg) {
+		msg = msg.trim(); // 앞 뒤 공백 제거
+		StyledDocument doc = textArea.getStyledDocument();
+		SimpleAttributeSet right = new SimpleAttributeSet();
+		StyleConstants.setAlignment(right, StyleConstants.ALIGN_RIGHT);
+		doc.setParagraphAttributes(doc.getLength(), 1, right, false);
+		try {
+			doc.insertString(doc.getLength(), msg + "\n", right);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		int len = textArea.getDocument().getLength();
+		textArea.setCaretPosition(len);
+	}
+	
 	// 엔터 / 전송 버튼 클릭 했을 때 채팅 전송하는 액션 리스너
 	class ChatMessageSendAction implements ActionListener {
 		@Override
@@ -68,6 +105,7 @@ public class ChatPanel extends JPanel{
 			if(e.getSource() == sendBtn || e.getSource() == textInput) {
 				String msg = null;
 				msg = textInput.getText();
+				appendChatMessageRight(msg); // 채팅창 우측에 메시지 출력
 				waitingRoomPanel.sendChatMessage(msg); // 메시지 전송
 				textInput.setText(""); // 입력창 초기화
 				textInput.requestFocus(); // 포커스 주기

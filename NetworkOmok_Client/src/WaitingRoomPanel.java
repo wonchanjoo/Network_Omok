@@ -13,10 +13,13 @@ import java.net.Socket;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class WaitingRoomPanel extends JPanel {
 	public String userName;
+	private OmokPanel omokPanel;
+	private ChatPanel chatPanel;
 	private WaitingRoomPanel waitingRoomPanel;
 	private Container container;
 	private CardLayout cardLayout;
@@ -64,6 +67,15 @@ public class WaitingRoomPanel extends JPanel {
 		this.add(tempBtn);
 	}
 	
+	/* -------------------- setter -------------------- */
+	public void setOmokPanel(OmokPanel omokPanel) {
+		this.omokPanel = omokPanel;
+	}
+	public void setChatPanel(ChatPanel chatPanel) {
+		this.chatPanel = chatPanel;
+	}
+	
+	/* -------------------- Send Method -------------------- */
 	// Server에게 network로 Object 전송
 	public void sendObject(Object obj) {
 		try {
@@ -113,10 +125,26 @@ public class WaitingRoomPanel extends JPanel {
 						continue;
 					}
 					
-					// code
+					/* --------------- Code --------------- */
 					switch (chatMsg.code) {
-					// 200 - 채팅 메시지, ChatPanel의 textArea에 append
-					case "200": 
+					// 무르기 요청
+					case "302":
+						int response = JOptionPane.showConfirmDialog(null, "무르기를 허용하시겠습니까?", "무르기", JOptionPane.YES_NO_OPTION);
+						if (response == JOptionPane.YES_OPTION) { // 무르기 허용
+							chatMsg = new ChatMsg(userName, "303", "YES");
+							sendObject(chatMsg);
+						} else { // 무르기 거절
+							chatMsg = new ChatMsg(userName, "304", "NO");
+							sendObject(chatMsg);
+						}
+						break;
+					// 무르기 허용
+					case "303":
+						// 전에 놓은 바둑돌 취소하기
+						break;
+					// 채팅 메시지
+					case "400":
+						chatPanel.appendChatMessageLeft(chatMsg.data);
 						break;
 					}
 					
