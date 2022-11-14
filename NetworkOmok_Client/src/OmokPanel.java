@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 public class OmokPanel extends JPanel {
 	private Font font;
 	
-	public OmokPanel() {
+	public OmokPanel(WaitingRoomPanel waitingRoomPanel) {
 		this.setLayout(null);
 		this.setBackground(Color.WHITE);
 		font = new Font("솔뫼 김대건 Medium", Font.PLAIN, 20);

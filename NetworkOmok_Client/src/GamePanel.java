@@ -18,6 +18,7 @@ import javax.swing.JSplitPane;
 public class GamePanel extends JPanel {
 	private Container container;
 	private CardLayout cardLayout;
+	private WaitingRoomPanel waitingRoomPanel;
 	
 	private Socket socket;
 	private InputStream is;
@@ -27,7 +28,9 @@ public class GamePanel extends JPanel {
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	
-	public GamePanel(Container container) {
+	public GamePanel(Container container, WaitingRoomPanel waitingRoomPanel) {
+		this.waitingRoomPanel = waitingRoomPanel;
+		
 		this.setSize(900, 650);
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.YELLOW);
@@ -43,7 +46,7 @@ public class GamePanel extends JPanel {
 		omokPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		omokPane.setDividerLocation(550); // 550을 기준으로 나눈다(프레임 사이즈 가로 900)
 		omokPane.setEnabled(false); // 기준을 움직일 수 없도록
-		omokPane.setLeftComponent(new OmokPanel()); // 왼쪽에 OmokPanel
-		omokPane.setRightComponent(new ChatPanel()); // 오른쪽에 ChatPanel
+		omokPane.setLeftComponent(new OmokPanel(waitingRoomPanel)); // 왼쪽에 OmokPanel
+		omokPane.setRightComponent(new ChatPanel(waitingRoomPanel)); // 오른쪽에 ChatPanel
 	}
 }

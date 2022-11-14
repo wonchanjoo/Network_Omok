@@ -10,38 +10,39 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class WaitingRoomPanel extends JPanel {
+	public String userName;
+	private WaitingRoomPanel waitingRoomPanel;
 	private Container container;
 	private CardLayout cardLayout;
 	GamePanel gamePanel;
 	
 	private Socket socket; // 연결 소켓
-	private InputStream is;
-	private OutputStream os;
-	private DataInputStream dis;
-	private DataOutputStream dos;
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	
 	public WaitingRoomPanel(Container container, String userName, String ip_addr, String port_no) {
+		System.out.println(userName + " " + ip_addr + " " + port_no);
+		waitingRoomPanel = this;
+		this.userName = userName;
 		this.container = container;
 		this.cardLayout = (CardLayout) container.getLayout();
 		
-		// socket 생성
 		try {
-			socket = new Socket(ip_addr, Integer.parseInt(port_no));
+			socket = new Socket(ip_addr, Integer.parseInt(port_no)); // socket 생성
 			
 			oos = new ObjectOutputStream(socket.getOutputStream());
 			oos.flush();
 			ois = new ObjectInputStream(socket.getInputStream());
 			
 			// 로그인 메시지 전송
-			ChatMsg msg = new ChatMsg(userName, "100", "login");
-			sendObject(msg);
+			ChatMsg loginMsg = new ChatMsg(userName, "100", "login");
+			sendObject(loginMsg);
 			
 			// 서버에게 메시지를 계속 받는 스레드 생성하고 실행
 			ListenNetwork net = new ListenNetwork();
@@ -55,7 +56,7 @@ public class WaitingRoomPanel extends JPanel {
 		tempBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gamePanel = new GamePanel(container);
+				gamePanel = new GamePanel(container, waitingRoomPanel);
 				container.add(gamePanel, "gamePanel");
 				cardLayout.show(container, "gamePanel");
 			}
@@ -67,13 +68,29 @@ public class WaitingRoomPanel extends JPanel {
 	public void sendObject(Object obj) {
 		try {
 			oos.writeObject(obj);
+			if(obj instanceof ChatMsg) {
+				ChatMsg temp = (ChatMsg) obj;
+				System.out.println(temp.UserName + " " + temp.code + " " + temp.data + " 전송");
+			}
 		} catch (Exception e) {
+			System.out.println("sendObject error");
+		}
+	}
 	
+	// Server에게 400 채팅 메시지 전송
+	public void sendChatMessage(String message) {
+		try {
+			ChatMsg chatMsg = new ChatMsg(userName, "400", message);
+			oos.writeObject(chatMsg);
+			System.out.println(userName + " 400 " + message + " 전송");
+		} catch (Exception e) {
+			System.out.println("sendChatMessage error");
 		}
 	}
 	
 	class ListenNetwork extends Thread {
 		public void run() {
+			// 서버로부터 메시지를 받는다.
 			while(true) {
 				try {
 					Object obj = null;
@@ -98,6 +115,7 @@ public class WaitingRoomPanel extends JPanel {
 					
 					// code
 					switch (chatMsg.code) {
+					// 200 - 채팅 메시지, ChatPanel의 textArea에 append
 					case "200": 
 						break;
 					}
