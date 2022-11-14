@@ -57,6 +57,7 @@ public class ChatPanel extends JPanel{
 		
 		JButton abstentionBtn = new JButton("기권");
 		abstentionBtn.setBounds(220, 250, 80, 40);
+		abstentionBtn.addActionListener(new AbstentionRequestAction());
 		this.add(abstentionBtn);
 	}
 	

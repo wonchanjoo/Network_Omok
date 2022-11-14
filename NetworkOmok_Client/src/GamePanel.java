@@ -50,12 +50,9 @@ public class GamePanel extends JPanel {
 		omokPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		omokPane.setDividerLocation(550); // 550을 기준으로 나눈다(프레임 사이즈 가로 900)
 		omokPane.setEnabled(false); // 기준을 움직일 수 없도록
-<<<<<<< HEAD
+
 		omokPane.setLeftComponent(new OmokPanel(waitingRoomPanel)); // 왼쪽에 OmokPanel
 		omokPane.setRightComponent(new ChatPanel(waitingRoomPanel)); // 오른쪽에 ChatPanel
-=======
-		omokPane.setLeftComponent(new OmokPanel()); // 왼쪽에 OmokPanel
-		omokPane.setRightComponent(new ChatPanel()); // 오른쪽에 ChatPanel
 		
 //		omokPane.addMouseMotionListener(new MouseAdapter() { // 오목판 좌표 +-13
 //			@Override
@@ -63,6 +60,5 @@ public class GamePanel extends JPanel {
 //				System.out.println(e.getX() + " " + e.getY());
 //			}
 //		});
->>>>>>> 5089026cab725c6a817a5f2f8dd2350152d7b1f6
 	}
 }
