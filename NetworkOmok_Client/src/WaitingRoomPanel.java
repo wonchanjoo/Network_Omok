@@ -68,7 +68,7 @@ public class WaitingRoomPanel extends JPanel {
 		try {
 			oos.writeObject(obj);
 		} catch (Exception e) {
-	
+			System.out.println("send error!");
 		}
 	}
 	
@@ -101,6 +101,7 @@ public class WaitingRoomPanel extends JPanel {
 					case "200": 
 						break;
 					}
+					
 				} catch (IOException e) {
 					try {
 						ois.close();

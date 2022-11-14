@@ -2,6 +2,10 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.MouseInfo;
+import java.awt.PointerInfo;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -45,5 +49,12 @@ public class GamePanel extends JPanel {
 		omokPane.setEnabled(false); // 기준을 움직일 수 없도록
 		omokPane.setLeftComponent(new OmokPanel()); // 왼쪽에 OmokPanel
 		omokPane.setRightComponent(new ChatPanel()); // 오른쪽에 ChatPanel
+		
+//		omokPane.addMouseMotionListener(new MouseAdapter() { // 오목판 좌표 +-13
+//			@Override
+//			public void mouseMoved(MouseEvent e) {
+//				System.out.println(e.getX() + " " + e.getY());
+//			}
+//		});
 	}
 }
