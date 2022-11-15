@@ -62,6 +62,10 @@ public class WaitingRoomPanel extends JPanel {
 				gamePanel = new GamePanel(container, waitingRoomPanel);
 				container.add(gamePanel, "gamePanel");
 				cardLayout.show(container, "gamePanel");
+				//버튼 누르면 방 접속처럼 작동하기 위한 임시 코드
+				ChatMsg obj = new ChatMsg(userName, "201", "asdf");
+				obj.roomId = "asdf";
+				sendObject(obj);
 			}
 		});
 		this.add(tempBtn);
