@@ -36,7 +36,7 @@ public class OmokServer extends JFrame {
 
 	private ServerSocket socket; // 서버소켓
 	private Socket client_socket; // accept() 에서 생성된 client 소켓
-	private Vector UserVec = new Vector(); // 연결된 사용자를 저장할 벡터
+	private Vector<UserService> UserVec = new Vector(); // 연결된 사용자를 저장할 벡터
 	private List<Room> roomList; //현재 서버에 있는 방 리스트
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
 
@@ -193,7 +193,7 @@ public class OmokServer extends JFrame {
 		private Vector user_vc;
 		public String UserName = "";
 		public String UserStatus;
-		public Vector player = new Vector();
+		public Vector<UserService> player = new Vector();
 		public String roomId = "";
 		public boolean isBlack = false;
 
@@ -466,8 +466,8 @@ public class OmokServer extends JFrame {
 							ChatMsg obj = new ChatMsg("server", "201", "플레이어 2명");
 							obj.isBlack = false;
 							oos.writeObject(obj);
-							
-							obj = new ChatMsg("server", "300", "게임 시작!!");
+							" "
+							obj = new ChatMsg("server", "300", player.elementAt(0).UserName + " " +player.elementAt(1).UserName);
 							oos.writeObject(obj);
 							
 							for(int i=0; i<19; i++) {
