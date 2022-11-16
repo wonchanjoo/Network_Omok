@@ -467,7 +467,7 @@ public class OmokServer extends JFrame {
 							obj.isBlack = false;
 							oos.writeObject(obj);
 							
-							obj = new ChatMsg("server", "400", "게임 시작!!");
+							obj = new ChatMsg("server", "300", "게임 시작!!");
 							oos.writeObject(obj);
 							
 							for(int i=0; i<19; i++) {
