@@ -507,6 +507,7 @@ public class OmokServer extends JFrame {
 						}
 						ChatMsg msg1 = new ChatMsg(cm.UserName, "301", "좌표");
 						msg1.isBlack = cm.isBlack;
+						msg1.point = cm.point;
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
 							if(user!=this && roomId.equals(user.roomId)) {
