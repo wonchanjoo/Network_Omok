@@ -461,20 +461,20 @@ public class OmokServer extends JFrame {
 						}
 						
 						if(this.player.size() == 2) { //게임 시작
-							//ChatMsg obj = new ChatMsg("server", "400", "게임 시작!!"); //change 300
 							this.isBlack = false;
-//							//ChatMsg obj = new ChatMsg("server", "201", "플레이어 2명");
-//							//obj.isBlack = false;
-//							//oos.writeObject(obj);
-//							
-//							for (int i = 0; i < user_vc.size(); i++) {
-//								UserService user = (UserService) user_vc.elementAt(i);
-//								if(roomId.equals(user.roomId)) {
-//									user.oos.writeObject(obj);
-//								}
-//							}
+							ChatMsg obj = new ChatMsg("server", "201", "백돌");
+							obj.isBlack = false;
+							oos.writeObject(obj);
+		
+							obj = new ChatMsg("server", "400", "게임 시작!!"); //게임 시작 메시지를 방에 있는 모든 object에게 뿌림
+							for (int i = 0; i < user_vc.size(); i++) {
+								UserService user = (UserService) user_vc.elementAt(i);
+								if(roomId.equals(user.roomId)) {
+									user.oos.writeObject(obj);
+								}
+							}
 							
-							ChatMsg obj = new ChatMsg("server", "300", player.elementAt(0).UserName + " " +player.elementAt(1).UserName);
+							obj = new ChatMsg("server", "300", player.elementAt(0).UserName + " " +player.elementAt(1).UserName);
 							
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
@@ -499,12 +499,20 @@ public class OmokServer extends JFrame {
 							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + this.player.size());
 						}
 						else {
+
+							ChatMsg obj = new ChatMsg("server", "400", "다른 참가자가 들어올 때 까지 잠시만 기다려 주세요...");
+							for (int i = 0; i < user_vc.size(); i++) {
+								UserService user = (UserService) user_vc.elementAt(i);
+								if(roomId.equals(user.roomId)) {
+									user.oos.writeObject(obj);
+								}
+							}
 							this.isBlack = true;
-							ChatMsg obj1 = new ChatMsg("server", "201", "다른 참가자가 들어올 때 까지 잠시만 기다려 주세요...");
+							obj = new ChatMsg("server", "201", "흑돌");
 							//obj1.roomId = this.roomId;
 							//obj1.player.add(this);
-							obj1.isBlack = true;
-							oos.writeObject(obj1);
+							obj.isBlack = true;
+							oos.writeObject(obj);
 							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + this.player.size());
 						}
 					}
