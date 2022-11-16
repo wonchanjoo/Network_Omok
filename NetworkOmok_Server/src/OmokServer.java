@@ -41,6 +41,16 @@ public class OmokServer extends JFrame {
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
 
 	public int[][] board = new int[19][19];
+	
+	
+	public void board_setUp() {
+		for(int i=0; i<19; i++) {
+			for(int j=0; j<19; j++) {
+				board[i][j] = 0;
+			}
+		}
+	}
+	
 
 	/**
 	 * Launch the application.
@@ -128,7 +138,7 @@ public class OmokServer extends JFrame {
 					// System.exit(0);
 				}
 			}
-		}
+		}	
 	}
 
 	public void AppendText(String str) {
@@ -185,6 +195,7 @@ public class OmokServer extends JFrame {
 		public String UserStatus;
 		public Vector player = new Vector();
 		public String roomId = "";
+		public boolean isBlack = false;
 
 		public UserService(Socket client_socket) {
 			// TODO Auto-generated constructor stub
@@ -215,7 +226,26 @@ public class OmokServer extends JFrame {
 				AppendText("userService error");
 			}
 		}
-
+		
+		private int getStoneX(int x) {
+			int value = (x - 37) / 27;
+			int rest = (x - 37) % 27;
+			if(rest <= 13)
+				return 37 + 27 * value;
+			else {
+				return 37 + 27 * (value + 1);
+			}
+		}
+		
+		private int getStoneY(int y) {
+			int value = (y - 110) / 27;
+			int rest = (y - 110) % 27;
+			if(rest <= 13)
+				return 110 + 27 * value;
+			else 
+				return 110 + 27 * (value + 1);
+		}
+		
 		public void Login() {
 			AppendText("새로운 참가자 " + UserName + " 입장.");
 			//WriteOne("Welcome to Java chat server\n");
@@ -398,6 +428,7 @@ public class OmokServer extends JFrame {
 					}
 					else if(cm.code.matches("201")) { // 방 접속
 						int exist = 0;
+						//isBlack = cm.isBlack; //change
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
 							if(cm.roomId.equals(user.roomId) && user.player.size() >= 2) {
@@ -421,6 +452,7 @@ public class OmokServer extends JFrame {
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
 							if(user!=this && roomId.equals(user.roomId)) {
+								//this.isBlack = false;
 								user.player.add(this);
 								this.player.add(user);
 								msg = "[" + UserName + "]님이 입장 하였습니다.\n";
@@ -428,29 +460,108 @@ public class OmokServer extends JFrame {
 							}
 						}
 						
-						if(this.player.size() == 2) {
-							ChatMsg obj = new ChatMsg("server", "400", "게임 시작!!"); //change
-							//obj.player = cm.player;
-							for (int i = 0; i < user_vc.size(); i++) {
-								UserService user = (UserService) user_vc.elementAt(i);
-								if(roomId.equals(user.roomId)) {
-									user.oos.writeObject(obj);
+						if(this.player.size() == 2) { //게임 시작
+							//ChatMsg obj = new ChatMsg("server", "400", "게임 시작!!"); //change 300
+							this.isBlack = false;
+							ChatMsg obj = new ChatMsg("server", "201", "플레이어 2명");
+							obj.isBlack = false;
+							oos.writeObject(obj);
+							
+							obj = new ChatMsg("server", "400", "게임 시작!!");
+							oos.writeObject(obj);
+							
+							for(int i=0; i<19; i++) {
+								for(int j=0; j<19; j++) {
+									board[i][j] = -1;
 								}
 							}
+							//obj.player = cm.player;
+//							for (int i = 0; i < user_vc.size(); i++) {
+//								UserService user = (UserService) user_vc.elementAt(i);
+//								if(roomId.equals(user.roomId)) {
+//									user.oos.writeObject(obj);
+//								}
+//							}
 							AppendText("[" + roomId + "]방 게임 시작!!");
 							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + this.player.size());
 						}
 						else {
-							ChatMsg obj1 = new ChatMsg("server", "400", "다른 참가자가 들어올 때 까지 잠시만 기다려 주세요...");
+							this.isBlack = true;
+							ChatMsg obj1 = new ChatMsg("server", "201", "다른 참가자가 들어올 때 까지 잠시만 기다려 주세요...");
 							//obj1.roomId = this.roomId;
 							//obj1.player.add(this);
+							obj1.isBlack = true;
 							oos.writeObject(obj1);
 							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + this.player.size());
 						}
 					}
-					else if (cm.code.matches("301")) {
-						int x = getOmokX(cm.mouse_e.getX());
+					else if (cm.code.matches("301")) { //MouseEvent
+						int boardX = (cm.point.x-37)/27;
+						int boardY = (cm.point.y-110)/27;
+						System.out.println("boardX = " + boardX + " boardY = " + boardY);
+						if(this.isBlack) {
+							board[boardX][boardY] = 1;
+						}
+						else {
+							board[boardX][boardY] = 2;
+						}
+						ChatMsg msg1 = new ChatMsg(cm.UserName, "301", "좌표");
+						
+						msg1.isBlack = cm.isBlack;
+						oos.writeObject(msg1);
 					}
+					else if (cm.code.matches("302")) { //무르기 요청
+						String str = "[" + cm.UserName + "]님이 무르기를 요청하셨습니다.";
+						AppendText(str);
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(user!=this && roomId.equals(user.roomId)) {
+								user.oos.writeObject(cm);
+							}
+						}
+					}
+					else if (cm.code.matches("303")) { //무르기 허용
+						String str = "[" + cm.UserName + "]님이 무르기를 허용하셨습니다.";
+						AppendText(str);
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(user!=this && roomId.equals(user.roomId)) {
+								user.oos.writeObject(cm);
+							}
+						}
+					}
+					else if (cm.code.matches("304")) { //무르기 거절
+						String str = "[" + cm.UserName + "]님이 무르기를 거절하셨습니다.";
+						AppendText(str);
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(user!=this && roomId.equals(user.roomId)) {
+								user.oos.writeObject(cm);
+							}
+						}
+					}
+					else if (cm.code.matches("305")) { //항복
+						String str = "[" + cm.UserName + "]님이 항복하셨습니다.";
+						AppendText(str);
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(user!=this && roomId.equals(user.roomId)) {
+								user.oos.writeObject(cm);
+							}
+						}
+						//게임 종료! 이긴 사람에게는 306, 진 사람에게는 307 프로토콜 전달, 관전자에게는 308
+					}
+					else if (cm.code.matches("309")) { //제한 시간 종료
+						String str = "[" + cm.UserName + "]님의 제한 시간이 종료되었습니다.";
+						AppendText(str);
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(user!=this && roomId.equals(user.roomId)) {
+								user.oos.writeObject(cm);
+							}
+						}
+					}
+					
 					else if (cm.code.matches("400")) { //chatting
 						msg = String.format("[%s] %s", cm.UserName, cm.data);
 						AppendText(msg); // server 화면에 출력
@@ -500,7 +611,41 @@ public class OmokServer extends JFrame {
 									user.oos.writeObject(new ChatMsg(UserName, "400", cm.data));
 							}
 						}
-					} else if (cm.code.matches("600")) { // logout
+					}
+					else if (cm.code.matches("500")) { //게임 초대
+						String str = "[" + cm.UserName + "]님이 [" + cm.data + "]님을 초대하셨습니다.";
+						AppendText(str);
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(cm.data.equals(user.UserName)) {
+								user.oos.writeObject(cm);
+							}
+						}
+					}
+					else if (cm.code.matches("501")) { //게임 초대 승인
+						String str = "[" + cm.UserName + "]님이 초대를 승인하셨습니다.";
+						AppendText(str);
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(cm.data.equals(user.UserName)) {
+								this.roomId = user.roomId;
+								this.player.add(this);
+								this.player.add(user);
+								user.player.add(this);
+							}
+						}
+					}
+					else if (cm.code.matches("502")) { //게임 초대 거절
+						String str = "[" + cm.UserName + "]님이 초대를 거절하셨습니다.";
+						AppendText(str);
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if(cm.data.equals(user.UserName)) {
+								user.oos.writeObject(cm);
+							}
+						}
+					}
+					else if (cm.code.matches("600")) { // logout
 						Logout();
 						break;
 					} else { // 300, 500, ... 기타 object는 모두 방송한다.
