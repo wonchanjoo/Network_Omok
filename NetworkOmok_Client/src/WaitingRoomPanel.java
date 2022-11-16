@@ -166,8 +166,8 @@ public class WaitingRoomPanel extends JPanel {
 						// 흑돌 백돌 이름 가져와서 화면에 표시
 						String userNames = chatMsg.data;
 						StringTokenizer st = new StringTokenizer(userNames);
-						omokPanel.blackPlayerName.setText(st.nextToken());
 						omokPanel.whitePlayerName.setText(st.nextToken());
+						omokPanel.blackPlayerName.setText(st.nextToken());
 						
 						if(omokPanel.getIsBlack()) // 흑돌인 경우
 							omokPanel.setStatus(true); // status를 true로 설정해 바둑돌을 놓을 수 있는 상태로 변경한다.
