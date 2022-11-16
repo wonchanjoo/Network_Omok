@@ -123,6 +123,7 @@ public class WaitingRoomPanel extends JPanel {
 			chatMsg.point = omokPanel.point;
 			chatMsg.isBlack = omokPanel.getIsBlack();
 			oos.writeObject(chatMsg);
+			omokPanel.setStatus(false);
 			System.out.println(userName + " 301 " + chatMsg.point + " 전송");
 		} catch (Exception e) {
 			System.out.println("sendMousePoint error");

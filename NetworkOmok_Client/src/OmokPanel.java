@@ -159,7 +159,7 @@ public class OmokPanel extends JPanel {
 				OmokPanel.this.add(wStone);
 			}
 			
-			point = new Point(x, y);
+			point = new Point(x - 13, y - 13);
 			OmokPanel.this.repaint();
 		}
 		
