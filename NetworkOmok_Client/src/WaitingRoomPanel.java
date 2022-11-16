@@ -2,6 +2,7 @@ import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -105,6 +106,19 @@ public class WaitingRoomPanel extends JPanel {
 		}
 	}
 	
+	// Server에게 301 마우스 이벤트 전송
+	public void sendMouseEvent(MouseEvent event, boolean isBlack) {
+		try {
+			ChatMsg chatMsg = new ChatMsg(userName, "301", "MouseEvent");
+			chatMsg.mouse_e = event; // 마우스 이벤트 저장
+			chatMsg.isBlack = isBlack; // 흑돌 백돌 여부 저장
+			oos.writeObject(chatMsg);
+			System.out.println(userName + " 301 전송");
+		} catch (Exception e) {
+			System.out.println("sendMouseEvent error");
+		}
+	}
+	
 	class ListenNetwork extends Thread {
 		public void run() {
 			// 서버로부터 메시지를 받는다.
@@ -132,9 +146,18 @@ public class WaitingRoomPanel extends JPanel {
 					
 					/* --------------- Code --------------- */
 					switch (chatMsg.code) {
-					// 백돌인지 흑돌인지
+					// 백돌인지 흑돌인지 data에 들어있다.
 					case "201":
-						omokPanel.isBlack = chatMsg.isBlack;
+						omokPanel.setIsBlack(chatMsg.isBlack);
+						break;
+					// 게임 시작
+					case "300":
+						if(omokPanel.getIsBlack()) // 흑돌인 경우
+							omokPanel.setStatus(true); // status를 true로 설정해 바둑돌을 놓을 수 있는 상태로 변경한다.
+						break;
+					// 서버로부터 계산된 마우스 이벤트 전달
+					case "301":
+						omokPanel.putStone(chatMsg.mouse_e.getX(), chatMsg.mouse_e.getY(), chatMsg.isBlack);
 						break;
 					// 무르기 요청
 					case "302":
