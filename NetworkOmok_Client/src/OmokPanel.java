@@ -26,6 +26,7 @@ public class OmokPanel extends JPanel {
 	
 	private boolean isBlack = false;
 	private boolean status = false;
+	public JLabel oldStone;
 	
 	private ImageIcon icon;
 	private Image img;

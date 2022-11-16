@@ -175,7 +175,7 @@ public class WaitingRoomPanel extends JPanel {
 						if(!omokPanel.getIsBlack()) // 백돌인 경우
 							chatPanel.putBtn.setEnabled(false); // 착수 버튼 비활성화
 						break;
-					// 서버로부터 계산된 마우스 이벤트 전달
+					// 서버로부터 계산된 마우스 이벤트
 					case "301":
 						omokPanel.putStone(chatMsg.point.x, chatMsg.point.y, chatMsg.isBlack);
 						if(chatMsg.isBlack == omokPanel.getIsBlack()) // 내가 보낸 좌표면
@@ -185,8 +185,12 @@ public class WaitingRoomPanel extends JPanel {
 							chatPanel.putBtn.setEnabled(true); // 착수 버튼 활성화
 						}
 						break;
-					// 무르기 요청
+					// 착수 거부
 					case "302":
+						JOptionPane.showMessageDialog(null, "해당 위치에 착수할 수 없습니다.", "Message", JOptionPane.ERROR_MESSAGE);
+						break;
+					// 무르기 요청
+					case "310":
 						int response = JOptionPane.showConfirmDialog(null, "무르기를 허용하시겠습니까?", "무르기", JOptionPane.YES_NO_OPTION);
 						if (response == JOptionPane.YES_OPTION) { // 무르기 허용
 							chatMsg = new ChatMsg(userName, "303", "YES");
@@ -197,14 +201,14 @@ public class WaitingRoomPanel extends JPanel {
 						}
 						break;
 					// 무르기 허용
-					case "303":
+					case "311":
 						// 전에 놓은 바둑돌 취소하기
 						break;
 					// 게임 승리
-					case "306":
+					case "321":
 						break;
 					// 게임 패배
-					case "307":
+					case "322":
 						break;
 					// 채팅 메시지
 					case "400":
