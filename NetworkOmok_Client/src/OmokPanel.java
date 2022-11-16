@@ -23,7 +23,7 @@ public class OmokPanel extends JPanel {
 	public Point point;
 	
 	private boolean isBlack = false;
-	private boolean status = false;
+	private boolean status = true;
 	
 	private ImageIcon icon;
 	private Image img;
@@ -149,11 +149,11 @@ public class OmokPanel extends JPanel {
 			y = getStoneY(y);
 			
 			if(isBlack) {
-				bStone.setLocation(x, y);
+				bStone.setLocation(x - 13, y - 13);
 				OmokPanel.this.add(bStone);
 			}
 			else {
-				wStone.setLocation(x, y);
+				wStone.setLocation(x - 13, y - 13);
 				OmokPanel.this.add(wStone);
 			}
 			

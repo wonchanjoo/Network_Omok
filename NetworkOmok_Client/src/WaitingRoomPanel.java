@@ -110,10 +110,11 @@ public class WaitingRoomPanel extends JPanel {
 	// Server에게 301 마우스 좌표 전송
 	public void sendMousePoint() {
 		// OmokPanel의 보여주기용 바둑돌 떼어내기
-		if(omokPanel.getIsBlack())
-			omokPanel.remove(omokPanel.bStone);
-		else
-			omokPanel.remove(omokPanel.wStone);
+		if(omokPanel.getIsBlack()) // 흑돌이면
+			omokPanel.remove(omokPanel.bStone); // 흑돌 떼어내기
+		else //  백돌이면
+			omokPanel.remove(omokPanel.wStone); // 백돌 떼어내기
+		omokPanel.repaint();
 		
 		// OmokPanel의 멤버 변수에서 좌표를 읽어와 전송해야 된다. 
 		try {
@@ -121,6 +122,7 @@ public class WaitingRoomPanel extends JPanel {
 			chatMsg.point = omokPanel.point;
 			chatMsg.isBlack = omokPanel.getIsBlack();
 			oos.writeObject(chatMsg);
+			System.out.println(userName + " 301 " + chatMsg.point + " 전송");
 		} catch (Exception e) {
 			System.out.println("sendMousePoint error");
 		}

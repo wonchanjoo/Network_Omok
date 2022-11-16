@@ -52,6 +52,7 @@ public class ChatPanel extends JPanel{
 		// 버튼 3개
 		JButton putBtn = new JButton("착수");
 		putBtn.setBounds(20, 250, 80, 40);
+		putBtn.addActionListener(new PutAction());
 		this.add(putBtn);
 		
 		JButton returnBtn = new JButton("무르기");
@@ -98,6 +99,7 @@ public class ChatPanel extends JPanel{
 		textArea.setCaretPosition(len);
 	}
 	
+	// 착수 버튼 클릭 했을 때 waitingRoomPanel에게 좌표 전달 해달라고 요청
 	class PutAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
