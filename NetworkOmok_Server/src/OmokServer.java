@@ -466,7 +466,6 @@ public class OmokServer extends JFrame {
 							ChatMsg obj = new ChatMsg("server", "201", "플레이어 2명");
 							obj.isBlack = false;
 							oos.writeObject(obj);
-							" "
 							obj = new ChatMsg("server", "300", player.elementAt(0).UserName + " " +player.elementAt(1).UserName);
 							oos.writeObject(obj);
 							
