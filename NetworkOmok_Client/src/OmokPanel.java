@@ -128,6 +128,7 @@ public class OmokPanel extends JPanel {
 			whiteStone.setBounds(x, y, 27, 27);
 			OmokPanel.this.add(whiteStone);
 		}
+		OmokPanel.this.repaint();
 	}
 	
 	// 클릭한 위치에 바둑돌이 보이도록
