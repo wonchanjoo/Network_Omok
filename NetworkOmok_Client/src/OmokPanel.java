@@ -3,7 +3,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.PointerInfo;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -15,24 +17,25 @@ import javax.swing.JPanel;
 
 public class OmokPanel extends JPanel {
 	private WaitingRoomPanel waitingRoomPanel;
+	private Font font;
+	public JLabel bStone; // 클릭할 때 보여주기용 바둑돌
+	public JLabel wStone; // 클릭할 때 보여주기용 바둑돌
+	public Point point;
 	
 	private boolean isBlack = false;
-	private boolean status = false;
-	
-	private List<JLabel> blacks = new ArrayList<>();
-	private List<JLabel> whites = new ArrayList<>();
-	
+	private boolean status = true;
 	
 	private ImageIcon icon;
 	private Image img;
 	private Image resizeImg;
 	private ImageIcon blackIcon;
 	private Image blackImg;
+	
 	private Image resizeBlackImg;
 	private ImageIcon whiteIcon;
 	private Image whiteImg;
 	private Image resizeWhiteImg;
-	private Font font;
+	
 	
 	public OmokPanel(WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
@@ -49,6 +52,12 @@ public class OmokPanel extends JPanel {
 		whiteIcon = new ImageIcon("images\\백돌.png");
 		whiteImg = whiteIcon.getImage();
 		resizeWhiteImg = whiteImg.getScaledInstance(27, 27, Image.SCALE_SMOOTH);
+		
+		bStone = new JLabel(new ImageIcon(resizeBlackImg));
+		wStone = new JLabel(new ImageIcon(resizeWhiteImg));
+		bStone.setSize(27, 27);
+		wStone.setSize(27, 27);
+		
 		
 		// 흑돌 Player1
 		icon = new ImageIcon("images\\흑돌.png");
@@ -119,31 +128,40 @@ public class OmokPanel extends JPanel {
 		}
 	}
 	
+	// 클릭한 위치에 바둑돌이 보이도록
 	class omokTableClickListener extends MouseAdapter {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			super.mousePressed(e);
-//			System.out.println(e.getPoint());
-//			
-//			int x = e.getX();
-//			int y = e.getY();
-//			if(x < 37 || x > 521)
-//				return;
-//			if(y < 109 || y > 593)
-//				return;
-//			
-//			x = getStoneX(x);
-//			y = getStoneY(y);
-//			
-//			System.out.println(x + ", " + y);
-//			stone.setLocation(x - 13, y - 13);
-//			OmokPanel.this.add(stone);
-//			OmokPanel.this.repaint();
-			// status가 true인 경우에만 마우스 좌표를 전송한다.
-			if(status)
-				waitingRoomPanel.sendMouseEvent(e, isBlack);
+			
+			// status가 true일 때만 클릭할 수 있다.
+			if(!status) return; 
+			
+			int x = e.getX();
+			int y = e.getY();
+			if(x < 37 || x > 521)
+				return;
+			if(y < 109 || y > 593)
+				return;
+			
+			// 최종 좌표
+			x = getStoneX(x);
+			y = getStoneY(y);
+			
+			if(isBlack) {
+				bStone.setLocation(x - 13, y - 13);
+				OmokPanel.this.add(bStone);
+			}
+			else {
+				wStone.setLocation(x - 13, y - 13);
+				OmokPanel.this.add(wStone);
+			}
+			
+			point = new Point(x, y);
+			OmokPanel.this.repaint();
 		}
 		
+		// 오목판 x 좌표 계산
 		private int getStoneX(int x) {
 			int value = (x - 37) / 27;
 			int rest = (x - 37) % 27;
@@ -154,6 +172,7 @@ public class OmokPanel extends JPanel {
 			}
 		}
 		
+		// 오목판 y 좌표 계산
 		private int getStoneY(int y) {
 			int value = (y - 110) / 27;
 			int rest = (y - 110) % 27;
@@ -163,4 +182,5 @@ public class OmokPanel extends JPanel {
 				return 110 + 27 * (value + 1);
 		}
 	}
+	
 }
