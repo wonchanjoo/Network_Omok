@@ -167,6 +167,10 @@ public class WaitingRoomPanel extends JPanel {
 					// 서버로부터 계산된 마우스 이벤트 전달
 					case "301":
 						omokPanel.putStone(chatMsg.point.x, chatMsg.point.y, chatMsg.isBlack);
+						if(chatMsg.isBlack == omokPanel.getIsBlack()) // 내가 보낸 좌표면
+							omokPanel.setStatus(false); // 내 차례가 아니므로 false
+						else // 상대방이 보낸 좌표면
+							omokPanel.setStatus(true); // 내 차례므로 true
 						break;
 					// 무르기 요청
 					case "302":
