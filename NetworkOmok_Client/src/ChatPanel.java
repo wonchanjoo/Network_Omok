@@ -98,6 +98,13 @@ public class ChatPanel extends JPanel{
 		textArea.setCaretPosition(len);
 	}
 	
+	class PutAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			waitingRoomPanel.sendMousePoint();
+		}
+	}
+	
 	// 엔터 / 전송 버튼 클릭 했을 때 채팅 전송하는 액션 리스너
 	class ChatMessageSendAction implements ActionListener {
 		@Override

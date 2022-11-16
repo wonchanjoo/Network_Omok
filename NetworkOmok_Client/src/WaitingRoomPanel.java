@@ -1,5 +1,6 @@
 import java.awt.CardLayout;
 import java.awt.Container;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -106,16 +107,22 @@ public class WaitingRoomPanel extends JPanel {
 		}
 	}
 	
-	// Server에게 301 마우스 이벤트 전송
-	public void sendMouseEvent(MouseEvent event, boolean isBlack) {
+	// Server에게 301 마우스 좌표 전송
+	public void sendMousePoint() {
+		// OmokPanel의 보여주기용 바둑돌 떼어내기
+		if(omokPanel.getIsBlack())
+			omokPanel.remove(omokPanel.bStone);
+		else
+			omokPanel.remove(omokPanel.wStone);
+		
+		// OmokPanel의 멤버 변수에서 좌표를 읽어와 전송해야 된다. 
 		try {
-			ChatMsg chatMsg = new ChatMsg(userName, "301", "MouseEvent");
-			chatMsg.mouse_e = event; // 마우스 이벤트 저장
-			chatMsg.isBlack = isBlack; // 흑돌 백돌 여부 저장
+			ChatMsg chatMsg = new ChatMsg(userName, "301", "point");
+			chatMsg.point = omokPanel.point;
+			chatMsg.isBlack = omokPanel.getIsBlack();
 			oos.writeObject(chatMsg);
-			System.out.println(userName + " 301 전송");
 		} catch (Exception e) {
-			System.out.println("sendMouseEvent error");
+			System.out.println("sendMousePoint error");
 		}
 	}
 	
@@ -157,7 +164,7 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 서버로부터 계산된 마우스 이벤트 전달
 					case "301":
-						omokPanel.putStone(chatMsg.mouse_e.getX(), chatMsg.mouse_e.getY(), chatMsg.isBlack);
+						omokPanel.putStone(chatMsg.point.x, chatMsg.point.y, chatMsg.isBlack);
 						break;
 					// 무르기 요청
 					case "302":
