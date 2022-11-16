@@ -62,7 +62,8 @@ public class WaitingRoomPanel extends JPanel {
 				gamePanel = new GamePanel(container, waitingRoomPanel);
 				container.add(gamePanel, "gamePanel");
 				cardLayout.show(container, "gamePanel");
-				//버튼 누르면 방 접속처럼 작동하기 위한 임시 코드
+				
+				//버튼 누르면 방 접속처럼 작동하기 위한 임시 코드, 방 접속 201 전송
 				ChatMsg obj = new ChatMsg(userName, "201", "asdf");
 				obj.roomId = "asdf";
 				sendObject(obj);
@@ -131,6 +132,10 @@ public class WaitingRoomPanel extends JPanel {
 					
 					/* --------------- Code --------------- */
 					switch (chatMsg.code) {
+					// 백돌인지 흑돌인지
+					case "201":
+						omokPanel.isBlack = chatMsg.isBlack;
+						break;
 					// 무르기 요청
 					case "302":
 						int response = JOptionPane.showConfirmDialog(null, "무르기를 허용하시겠습니까?", "무르기", JOptionPane.YES_NO_OPTION);

@@ -11,6 +11,7 @@ public class ChatMsg implements Serializable {
 	public MouseEvent mouse_e;
 	public String roomId;
 	public Vector player = new Vector();
+	public boolean isBlack;
 
 	public ChatMsg(String UserName, String code, String msg) {
 		this.code = code;

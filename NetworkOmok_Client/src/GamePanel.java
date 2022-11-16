@@ -26,22 +26,14 @@ public class GamePanel extends JPanel {
 	private OmokPanel omokPanel;
 	private ChatPanel chatPanel;
 	
-	private Socket socket;
-	private InputStream is;
-	private OutputStream os;
-	private DataInputStream dis;
-	private DataOutputStream dos;
-	private ObjectInputStream ois;
-	private ObjectOutputStream oos;
-	
 	public GamePanel(Container container, WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
+		this.container = container;
+		this.cardLayout = (CardLayout) container.getLayout();
 		
 		this.setSize(900, 650);
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.YELLOW);
-		this.container = container;
-		this.cardLayout = (CardLayout) container.getLayout();
 		
 		splitPane();
 	}
