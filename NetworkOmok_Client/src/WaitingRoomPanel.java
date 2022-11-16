@@ -171,14 +171,19 @@ public class WaitingRoomPanel extends JPanel {
 						
 						if(omokPanel.getIsBlack()) // 흑돌인 경우
 							omokPanel.setStatus(true); // status를 true로 설정해 바둑돌을 놓을 수 있는 상태로 변경한다.
+						
+						if(!omokPanel.getIsBlack()) // 백돌인 경우
+							chatPanel.putBtn.setEnabled(false); // 착수 버튼 비활성화
 						break;
 					// 서버로부터 계산된 마우스 이벤트 전달
 					case "301":
 						omokPanel.putStone(chatMsg.point.x, chatMsg.point.y, chatMsg.isBlack);
 						if(chatMsg.isBlack == omokPanel.getIsBlack()) // 내가 보낸 좌표면
 							omokPanel.setStatus(false); // 내 차례가 아니므로 false
-						else // 상대방이 보낸 좌표면
+						else { // 상대방이 보낸 좌표면
 							omokPanel.setStatus(true); // 내 차례므로 true
+							chatPanel.putBtn.setEnabled(true); // 착수 버튼 활성화
+						}
 						break;
 					// 무르기 요청
 					case "302":

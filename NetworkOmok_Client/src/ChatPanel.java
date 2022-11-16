@@ -21,6 +21,7 @@ public class ChatPanel extends JPanel{
 	private JTextPane textArea;
 	private JTextField textInput;
 	private JButton sendBtn;
+	public JButton putBtn;
 	
 	public ChatPanel(WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
@@ -50,7 +51,7 @@ public class ChatPanel extends JPanel{
 		sendBtn.addActionListener(chatMessageSendAction);
 		
 		// 버튼 3개
-		JButton putBtn = new JButton("착수");
+		putBtn = new JButton("착수");
 		putBtn.setBounds(20, 250, 80, 40);
 		putBtn.addActionListener(new PutAction());
 		this.add(putBtn);
@@ -104,6 +105,7 @@ public class ChatPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			waitingRoomPanel.sendMousePoint();
+			putBtn.setEnabled(false);
 		}
 	}
 	
