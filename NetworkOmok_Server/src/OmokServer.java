@@ -463,18 +463,18 @@ public class OmokServer extends JFrame {
 						if(this.player.size() == 2) { //게임 시작
 							//ChatMsg obj = new ChatMsg("server", "400", "게임 시작!!"); //change 300
 							this.isBlack = false;
-							ChatMsg obj = new ChatMsg("server", "201", "플레이어 2명");
-							obj.isBlack = false;
-							oos.writeObject(obj);
+//							//ChatMsg obj = new ChatMsg("server", "201", "플레이어 2명");
+//							//obj.isBlack = false;
+//							//oos.writeObject(obj);
+//							
+//							for (int i = 0; i < user_vc.size(); i++) {
+//								UserService user = (UserService) user_vc.elementAt(i);
+//								if(roomId.equals(user.roomId)) {
+//									user.oos.writeObject(obj);
+//								}
+//							}
 							
-							for (int i = 0; i < user_vc.size(); i++) {
-								UserService user = (UserService) user_vc.elementAt(i);
-								if(roomId.equals(user.roomId)) {
-									user.oos.writeObject(obj);
-								}
-							}
-							
-							obj = new ChatMsg("server", "300", player.elementAt(0).UserName + " " +player.elementAt(1).UserName);
+							ChatMsg obj = new ChatMsg("server", "300", player.elementAt(0).UserName + " " +player.elementAt(1).UserName);
 							
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
