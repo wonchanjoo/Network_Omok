@@ -21,9 +21,11 @@ public class OmokPanel extends JPanel {
 	public JLabel bStone; // 클릭할 때 보여주기용 바둑돌
 	public JLabel wStone; // 클릭할 때 보여주기용 바둑돌
 	public Point point;
+	public JLabel blackPlayerName;
+	public JLabel whitePlayerName;
 	
 	private boolean isBlack = false;
-	private boolean status = true;
+	private boolean status = false;
 	
 	private ImageIcon icon;
 	private Image img;
@@ -68,7 +70,7 @@ public class OmokPanel extends JPanel {
 		blackStoneLabel.setBounds(40, 30, 50, 50);
 		this.add(blackStoneLabel);
 		
-		JLabel blackPlayerName = new JLabel("player1");
+		blackPlayerName = new JLabel("player1");
 		blackPlayerName.setFont(font);
 		blackPlayerName.setBounds(100, 30, 100, 50);
 		this.add(blackPlayerName);
@@ -82,7 +84,7 @@ public class OmokPanel extends JPanel {
 		whiteStoneLabel.setBounds(330, 30, 50, 50);
 		this.add(whiteStoneLabel);
 		
-		JLabel whitePlayerName = new JLabel("player2");
+		whitePlayerName = new JLabel("player2");
 		whitePlayerName.setFont(font);
 		whitePlayerName.setBounds(390, 30, 100, 50);
 		this.add(whitePlayerName);
