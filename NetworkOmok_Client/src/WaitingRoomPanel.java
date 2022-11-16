@@ -181,9 +181,18 @@ public class WaitingRoomPanel extends JPanel {
 					case "303":
 						// 전에 놓은 바둑돌 취소하기
 						break;
+					// 게임 승리
+					case "306":
+						break;
+					// 게임 패배
+					case "307":
+						break;
 					// 채팅 메시지
 					case "400":
 						chatPanel.appendChatMessageLeft(chatMsg.data);
+						break;
+					// 게임 초대
+					case "500":
 						break;
 					}
 					
