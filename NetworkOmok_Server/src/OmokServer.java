@@ -485,7 +485,7 @@ public class OmokServer extends JFrame {
 							
 							for(int i=0; i<19; i++) {
 								for(int j=0; j<19; j++) {
-									board[i][j] = -1;
+									board[i][j] = 0;
 								}
 							}
 							//obj.player = cm.player;
@@ -511,8 +511,19 @@ public class OmokServer extends JFrame {
 					else if (cm.code.matches("301")) { //MouseEvent
 						int boardX = (cm.point.x-37)/27;
 						int boardY = (cm.point.y-110)/27;
-						System.out.println("boardX = " + boardX + " boardY = " + boardY);
+				
+						if(board[boardX][boardY] != 0) {
+							ChatMsg msg1 = new ChatMsg("server", "302", "location error");
+							oos.writeObject(msg1);
+							continue;
+						}
+						
+						String blwr = cm.isBlack ? "Black" : "White";
+
+						System.out.println(blwr + " : boardX = " + boardX + " boardY = " + boardY);
+						
 						if(this.isBlack) {
+						//if(cm.isBlack) {
 							board[boardX][boardY] = 1;
 						}
 						else {
@@ -528,7 +539,7 @@ public class OmokServer extends JFrame {
 							}
 						}
 					}
-					else if (cm.code.matches("302")) { //무르기 요청
+					else if (cm.code.matches("310")) { //무르기 요청
 						String str = "[" + cm.UserName + "]님이 무르기를 요청하셨습니다.";
 						AppendText(str);
 						for (int i = 0; i < user_vc.size(); i++) {
@@ -538,7 +549,7 @@ public class OmokServer extends JFrame {
 							}
 						}
 					}
-					else if (cm.code.matches("303")) { //무르기 허용
+					else if (cm.code.matches("311")) { //무르기 허용
 						String str = "[" + cm.UserName + "]님이 무르기를 허용하셨습니다.";
 						AppendText(str);
 						for (int i = 0; i < user_vc.size(); i++) {
@@ -548,7 +559,7 @@ public class OmokServer extends JFrame {
 							}
 						}
 					}
-					else if (cm.code.matches("304")) { //무르기 거절
+					else if (cm.code.matches("312")) { //무르기 거절
 						String str = "[" + cm.UserName + "]님이 무르기를 거절하셨습니다.";
 						AppendText(str);
 						for (int i = 0; i < user_vc.size(); i++) {
@@ -558,7 +569,7 @@ public class OmokServer extends JFrame {
 							}
 						}
 					}
-					else if (cm.code.matches("305")) { //항복
+					else if (cm.code.matches("313")) { //항복
 						String str = "[" + cm.UserName + "]님이 항복하셨습니다.";
 						AppendText(str);
 						for (int i = 0; i < user_vc.size(); i++) {
@@ -567,9 +578,9 @@ public class OmokServer extends JFrame {
 								user.oos.writeObject(cm);
 							}
 						}
-						//게임 종료! 이긴 사람에게는 306, 진 사람에게는 307 프로토콜 전달, 관전자에게는 308
+						//게임 종료! 이긴 사람에게는 321, 진 사람에게는 322 프로토콜 전달, 관전자에게는 323
 					}
-					else if (cm.code.matches("309")) { //제한 시간 종료
+					else if (cm.code.matches("324")) { //제한 시간 종료
 						String str = "[" + cm.UserName + "]님의 제한 시간이 종료되었습니다.";
 						AppendText(str);
 						for (int i = 0; i < user_vc.size(); i++) {
