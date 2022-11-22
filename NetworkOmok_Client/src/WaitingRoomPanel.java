@@ -120,7 +120,7 @@ public class WaitingRoomPanel extends JPanel {
 		// OmokPanel의 멤버 변수에서 좌표를 읽어와 전송해야 된다. 
 		try {
 			ChatMsg chatMsg = new ChatMsg(userName, "301", "point");
-			chatMsg.point = omokPanel.point;
+			chatMsg.point = new Point(omokPanel.oldStone.getX(), omokPanel.oldStone.getY());
 			chatMsg.isBlack = omokPanel.getIsBlack();
 			oos.writeObject(chatMsg);
 			omokPanel.setStatus(false);
@@ -169,11 +169,13 @@ public class WaitingRoomPanel extends JPanel {
 						omokPanel.whitePlayerName.setText(st.nextToken());
 						omokPanel.blackPlayerName.setText(st.nextToken());
 						
-						if(omokPanel.getIsBlack()) // 흑돌인 경우
+						if(omokPanel.getIsBlack()) { // 흑돌인 경우
 							omokPanel.setStatus(true); // status를 true로 설정해 바둑돌을 놓을 수 있는 상태로 변경한다.
+							chatPanel.putBtn.setEnabled(true);
+						}
 						
-						if(!omokPanel.getIsBlack()) // 백돌인 경우
-							chatPanel.putBtn.setEnabled(false); // 착수 버튼 비활성화
+						chatPanel.returnBtn.setEnabled(true);
+						chatPanel.abstentionBtn.setEnabled(true);
 						break;
 					// 서버로부터 계산된 마우스 이벤트
 					case "301":
@@ -205,12 +207,25 @@ public class WaitingRoomPanel extends JPanel {
 					// 무르기 허용
 					case "311":
 						// 전에 놓은 바둑돌 취소하기
+						omokPanel.remove(omokPanel.oldStone);
 						break;
 					// 게임 승리
 					case "321":
+						int response2 = JOptionPane.showConfirmDialog(null, "게임 승리!\n 게임을 종료하시겠습니까?", "게임 승리", JOptionPane.YES_NO_OPTION);
+						if (response2 == JOptionPane.YES_OPTION) { // 게임 종료
+							System.exit(0);
+						} else { // 대기실로 이동
+							cardLayout.show(container, "waitingRoomPanel");
+						}
 						break;
 					// 게임 패배
 					case "322":
+						int response3 = JOptionPane.showConfirmDialog(null, "게임 패배!\n 게임을 종료하시겠습니까?", "게임 패배", JOptionPane.YES_NO_OPTION);
+						if (response3 == JOptionPane.YES_OPTION) { // 게임 종료
+							System.exit(0);
+						} else { // 대기실로 이동
+							cardLayout.show(container, "waitingRoomPanel");
+						}
 						break;
 					// 채팅 메시지
 					case "400":

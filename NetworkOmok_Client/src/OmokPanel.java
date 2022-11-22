@@ -20,7 +20,6 @@ public class OmokPanel extends JPanel {
 	private Font font;
 	public JLabel bStone; // 클릭할 때 보여주기용 바둑돌
 	public JLabel wStone; // 클릭할 때 보여주기용 바둑돌
-	public Point point;
 	public JLabel blackPlayerName;
 	public JLabel whitePlayerName;
 	
@@ -152,16 +151,17 @@ public class OmokPanel extends JPanel {
 			x = getStoneX(x);
 			y = getStoneY(y);
 			
-			if(isBlack) {
+			if(isBlack) { // 자신이 흑돌인 경우
 				bStone.setLocation(x - 13, y - 13);
+				oldStone = bStone; // 현재 바둑돌 저장
 				OmokPanel.this.add(bStone);
 			}
-			else {
+			else { // 자신이 백돌인 경우
 				wStone.setLocation(x - 13, y - 13);
+				oldStone = wStone; // 현재 바둑돌 저장
 				OmokPanel.this.add(wStone);
 			}
 			
-			point = new Point(x - 13, y - 13);
 			OmokPanel.this.repaint();
 		}
 		
@@ -186,5 +186,4 @@ public class OmokPanel extends JPanel {
 				return 110 + 27 * (value + 1);
 		}
 	}
-	
 }

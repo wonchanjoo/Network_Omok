@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -22,6 +23,8 @@ public class ChatPanel extends JPanel{
 	private JTextField textInput;
 	private JButton sendBtn;
 	public JButton putBtn;
+	public JButton returnBtn;
+	public JButton abstentionBtn;
 	
 	public ChatPanel(WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
@@ -53,16 +56,19 @@ public class ChatPanel extends JPanel{
 		// 버튼 3개
 		putBtn = new JButton("착수");
 		putBtn.setBounds(20, 250, 80, 40);
+		putBtn.setEnabled(false);
 		putBtn.addActionListener(new PutAction());
 		this.add(putBtn);
 		
-		JButton returnBtn = new JButton("무르기");
+		returnBtn = new JButton("무르기");
 		returnBtn.setBounds(120, 250, 80, 40);
+		returnBtn.setEnabled(false);
 		returnBtn.addActionListener(new ReturnRequestAction());
 		this.add(returnBtn);
 		
-		JButton abstentionBtn = new JButton("기권");
+		abstentionBtn = new JButton("기권");
 		abstentionBtn.setBounds(220, 250, 80, 40);
+		abstentionBtn.setEnabled(false);
 		abstentionBtn.addActionListener(new AbstentionRequestAction());
 		this.add(abstentionBtn);
 	}
@@ -100,12 +106,12 @@ public class ChatPanel extends JPanel{
 		textArea.setCaretPosition(len);
 	}
 	
-	// 착수 버튼 클릭 했을 때 waitingRoomPanel에게 좌표 전달 해달라고 요청
+	// 착수 버튼 클릭 했을 때 waitingRoomPanel에게 좌표 전달 해달라고 요청하는 액션 리스너
 	class PutAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			waitingRoomPanel.sendMousePoint();
-			putBtn.setEnabled(false);
+			putBtn.setEnabled(false); // 착수 버튼 비활성화
 		}
 	}
 	
@@ -128,8 +134,8 @@ public class ChatPanel extends JPanel{
 	class ReturnRequestAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ChatMsg chatMsg = new ChatMsg(waitingRoomPanel.userName, "302", "return");
-			waitingRoomPanel.sendObject(chatMsg);
+			ChatMsg chatMsg = new ChatMsg(waitingRoomPanel.userName, "310", "return");
+			waitingRoomPanel.sendObject(chatMsg); // 무르기 메시지 전송
 		}
 	}
 	
@@ -137,8 +143,13 @@ public class ChatPanel extends JPanel{
 	class AbstentionRequestAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ChatMsg chatMsg = new ChatMsg(waitingRoomPanel.userName, "305", "abstention");
-			waitingRoomPanel.sendObject(chatMsg);
+			int response = JOptionPane.showConfirmDialog(null, "기권 하시겠습니까?","기권", JOptionPane.YES_NO_OPTION);
+			if (response == JOptionPane.YES_OPTION) { // 기권
+				ChatMsg chatMsg = new ChatMsg(waitingRoomPanel.userName, "320", "abstention");
+				waitingRoomPanel.sendObject(chatMsg);
+			} else { // 기권 취소
+				
+			}
 		}
 	}
 }

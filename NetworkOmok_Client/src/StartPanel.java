@@ -75,6 +75,7 @@ public class StartPanel extends JPanel {
 		userNameInput = new JTextField();
 		userNameInput.setHorizontalAlignment(SwingConstants.CENTER);
 		userNameInput.setBounds(320, 390, 200, 40);
+		userNameInput.addActionListener(new StartBtnAction());
 		this.add(userNameInput);
 
 		// 시작 버튼
