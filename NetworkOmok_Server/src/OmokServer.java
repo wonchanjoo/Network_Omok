@@ -374,6 +374,18 @@ public class OmokServer extends JFrame {
 			}
 		}
 		
+		private boolean CheckOmok(int blwh) {
+			for(int i=0; i<19; i++) {
+				for(int j=0; j<19; j++) {
+					if(board[i][j]==blwh && board[i][j+1]==blwh && board[i][j+2]==blwh && board[i][j+3]==blwh && board[i][j+4]==blwh) return true;
+					else if(board[i][j]==blwh && board[i+1][j]==blwh && board[i+2][j]==blwh && board[i+3][j]==blwh && board[i+4][j]==blwh) return true;
+					else if(board[i][j]==blwh && board[i+1][j+1]==blwh && board[i+2][j+2]==blwh && board[i+3][j+3]==blwh && board[i+4][j+4]==blwh) return true;
+					else if(board[i][j]==blwh && board[i+1][j-1]==blwh && board[i+2][j-2]==blwh && board[i+3][j-3]==blwh && board[i+4][j-4]==blwh) return true;
+				}
+			}
+			return false;
+		}
+		
 		public void run() {
 			while (true) { // 사용자 접속을 계속해서 받기 위해 while문
 				try {
@@ -519,7 +531,9 @@ public class OmokServer extends JFrame {
 					else if (cm.code.matches("301")) { //MouseEvent
 						int boardX = (cm.point.x-37)/27;
 						int boardY = (cm.point.y-110)/27;
+						boolean winner = false;
 				
+						//착수 거부, 33도 여기서 처리?
 						if(board[boardX][boardY] != 0) {
 							ChatMsg msg1 = new ChatMsg("server", "302", "location error");
 							oos.writeObject(msg1);
@@ -533,10 +547,14 @@ public class OmokServer extends JFrame {
 						if(this.isBlack) {
 						//if(cm.isBlack) {
 							board[boardX][boardY] = 1;
+							winner = CheckOmok(1);
 						}
 						else {
 							board[boardX][boardY] = 2;
+							winner = CheckOmok(2);
 						}
+						
+						//좌표를 모든 참가자에게 뿌려준다.
 						ChatMsg msg1 = new ChatMsg(cm.UserName, "301", "좌표");
 						msg1.isBlack = cm.isBlack;
 						msg1.point = cm.point;
@@ -546,6 +564,19 @@ public class OmokServer extends JFrame {
 								user.oos.writeObject(msg1);
 							}
 						}
+						
+						if(winner) {
+							//ChatMsg msg2 = new ChatMsg();
+							oos.writeObject(new ChatMsg("server", "321", "Win"));
+							for (int i = 0; i < user_vc.size(); i++) {
+								UserService user = (UserService) user_vc.elementAt(i);
+								if(user!=this && roomId.equals(user.roomId)) {
+									user.oos.writeObject(new ChatMsg("server", "322", "lose"));
+									break;
+								}
+							}
+						}
+						
 					}
 					else if (cm.code.matches("310")) { //무르기 요청
 						String str = "[" + cm.UserName + "]님이 무르기를 요청하셨습니다.";
