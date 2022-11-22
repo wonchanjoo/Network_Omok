@@ -15,9 +15,13 @@ import java.net.Socket;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 
 public class WaitingRoomPanel extends JPanel {
 	public String userName;
@@ -28,16 +32,48 @@ public class WaitingRoomPanel extends JPanel {
 	private CardLayout cardLayout;
 	GamePanel gamePanel;
 	
+	public JList roomList;
+	public DefaultListModel roomModel; // JList에 보이는 실제 대기실 데이터
+	public JList allUserList;
+	public DefaultListModel allUserModel;
+	private RoomInfoFrame roomInfoFrame;
+	
 	private Socket socket; // 연결 소켓
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	
 	public WaitingRoomPanel(Container container, String userName, String ip_addr, String port_no) {
-		System.out.println(userName + " " + ip_addr + " " + port_no);
 		waitingRoomPanel = this;
 		this.userName = userName;
 		this.container = container;
 		this.cardLayout = (CardLayout) container.getLayout();
+		this.setSize(900, 650);
+		this.setLayout(null);
+		
+		// 대기실 생성
+		roomModel = new DefaultListModel();
+		roomList = new JList(roomModel);
+		roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 리스트가 하나만 선택될 수 있도록
+		roomList.setBounds(5, 5, 550, 600);
+		this.add(roomList);
+		
+		// 접속자 리스트 생성
+		allUserModel = new DefaultListModel();
+		allUserList = new JList(allUserModel);
+		allUserList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		allUserList.setBounds(560, 5, 320, 400);
+		this.add(allUserList);
+		
+		// 방 만들기 버튼 생성
+		JButton createRoomBtn = new JButton("방 만들기");
+		createRoomBtn.setBounds(655, 450, 130, 50);
+		createRoomBtn.addActionListener(new CreateRoomBtnClick());
+		this.add(createRoomBtn);
+		
+		// 방 접속 버튼 생성
+		JButton enterRoomBtn = new JButton("방 접속");
+		enterRoomBtn.setBounds(655, 520, 130, 50);
+		this.add(enterRoomBtn);
 		
 		try {
 			socket = new Socket(ip_addr, Integer.parseInt(port_no)); // socket 생성
@@ -57,9 +93,8 @@ public class WaitingRoomPanel extends JPanel {
 			e.printStackTrace();
 		}
 		
-		// 일단 버튼 누르면 gamePanel로 넘어가도록
-		JButton tempBtn = new JButton("start Game");
-		tempBtn.addActionListener(new ActionListener() {
+		// 일단 방 접속 버튼 누르면 gamePanel로 넘어가도록
+		enterRoomBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				gamePanel = new GamePanel(container, waitingRoomPanel);
@@ -67,12 +102,32 @@ public class WaitingRoomPanel extends JPanel {
 				cardLayout.show(container, "gamePanel");
 				
 				//버튼 누르면 방 접속처럼 작동하기 위한 임시 코드, 방 접속 201 전송
-				ChatMsg obj = new ChatMsg(userName, "201", "asdf");
+				ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
 				obj.roomId = "asdf";
 				sendObject(obj);
 			}
 		});
-		this.add(tempBtn);
+	}
+	
+	class CreateRoomBtnClick implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// 방 정보 입력 받을? JFrame 띄우기???
+			roomInfoFrame = new RoomInfoFrame(waitingRoomPanel);
+		}
+	}
+	
+	public void createRoom(String roomName, String password) {
+		System.out.println("room name = " + roomName + ", password = " + password);
+		roomInfoFrame.dispose(); // 프레임 닫고
+		
+		gamePanel = new GamePanel(container, waitingRoomPanel); // GamePanel 생성
+		container.add(gamePanel, "gamePanel");
+		cardLayout.show(container, "gamePanel"); // GamePanel로 패널 전환
+		
+		ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
+		obj.roomId = "asdf";
+		sendObject(obj); // 방 접속 메시지 서버로 전송
 	}
 	
 	/* -------------------- setter -------------------- */
