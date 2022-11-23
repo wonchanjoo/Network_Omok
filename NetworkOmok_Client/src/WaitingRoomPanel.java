@@ -1,4 +1,5 @@
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -15,13 +16,17 @@ import java.net.Socket;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class WaitingRoomPanel extends JPanel {
 	public String userName;
@@ -58,6 +63,7 @@ public class WaitingRoomPanel extends JPanel {
 		roomList = new JList(roomModel);
 		roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 리스트가 하나만 선택될 수 있도록
 		roomList.setBounds(5, 5, 550, 600);
+		roomList.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // 리스트 경계선 생성
 		this.add(roomList);
 		
 		// 접속자 리스트 생성
@@ -129,6 +135,7 @@ public class WaitingRoomPanel extends JPanel {
 		cardLayout.show(container, "gamePanel"); // GamePanel로 패널 전환
 		
 		ChatMsg chatMsg = new ChatMsg(userName, "200", "방 만들기");
+		chatMsg.UserName = userName;
 		chatMsg.roomName = roomName;
 		chatMsg.password = password;
 		chatMsg.peopleCount = 2; // 일단 2명으로 설정
@@ -137,6 +144,15 @@ public class WaitingRoomPanel extends JPanel {
 //		ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
 //		obj.roomId = "asdf";
 //		sendObject(obj); // 방 접속 메시지 서버로 전송
+	}
+	
+	class RoomListClick implements ListSelectionListener {
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			int index = roomList.getSelectedIndex(); // 선택된 리스트 요소의 인덱스
+			if(index == -1) return;
+			
+		}
 	}
 	
 	/* -------------------- setter -------------------- */
@@ -214,7 +230,8 @@ public class WaitingRoomPanel extends JPanel {
 					
 					if(obj instanceof ChatMsg) {
 						chatMsg = (ChatMsg) obj;
-						msg = String.format("[%s]\n%s", chatMsg.UserName,chatMsg.data);
+						msg = String.format("[%s]\n%s %s 받음", chatMsg.UserName, chatMsg.code, chatMsg.data);
+						System.out.println(msg);
 					} else {
 						continue;
 					}
@@ -232,6 +249,7 @@ public class WaitingRoomPanel extends JPanel {
 						omokRooms.add(newRoom); // 방 리스트에 추가
 						
 						String roomStr = String.format("%20s%5d/%5d", chatMsg.roomName, newRoom.currentPeoples, chatMsg.peopleCount);
+						System.out.println("roomStr = " + roomStr);
 						roomModel.addElement(roomStr); // 리스트 모델에 추가
 						
 						break;
