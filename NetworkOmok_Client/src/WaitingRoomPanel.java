@@ -27,6 +27,7 @@ public class WaitingRoomPanel extends JPanel {
 	public String userName;
 	private OmokPanel omokPanel;
 	private ChatPanel chatPanel;
+	private JFrame mainFrame;
 	private WaitingRoomPanel waitingRoomPanel;
 	private Container container;
 	private CardLayout cardLayout;
@@ -42,8 +43,9 @@ public class WaitingRoomPanel extends JPanel {
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	
-	public WaitingRoomPanel(Container container, String userName, String ip_addr, String port_no) {
+	public WaitingRoomPanel(Container container, JFrame mainFrame, String userName, String ip_addr, String port_no) {
 		waitingRoomPanel = this;
+		this.mainFrame = mainFrame;
 		this.userName = userName;
 		this.container = container;
 		this.cardLayout = (CardLayout) container.getLayout();
@@ -244,13 +246,13 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 착수 거부
 					case "302":
-						JOptionPane.showMessageDialog(null, "해당 위치에 착수할 수 없습니다.", "Message", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(mainFrame, "해당 위치에 착수할 수 없습니다.", "Message", JOptionPane.ERROR_MESSAGE);
 						omokPanel.setStatus(true);
 						chatPanel.putBtn.setEnabled(true);
 						break;
 					// 무르기 요청
 					case "310":
-						int response = JOptionPane.showConfirmDialog(null, "무르기를 허용하시겠습니까?", "무르기", JOptionPane.YES_NO_OPTION);
+						int response = JOptionPane.showConfirmDialog(mainFrame, "무르기를 허용하시겠습니까?", "무르기", JOptionPane.YES_NO_OPTION);
 						if (response == JOptionPane.YES_OPTION) { // 무르기 허용
 							chatMsg = new ChatMsg(userName, "303", "YES");
 							sendObject(chatMsg);
@@ -266,7 +268,7 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 게임 승리
 					case "321":
-						int response2 = JOptionPane.showConfirmDialog(null, "게임 승리!\n 게임을 종료하시겠습니까?", "게임 승리", JOptionPane.YES_NO_OPTION);
+						int response2 = JOptionPane.showConfirmDialog(mainFrame, "게임 승리!\n 게임을 종료하시겠습니까?", "게임 승리", JOptionPane.YES_NO_OPTION);
 						if (response2 == JOptionPane.YES_OPTION) { // 게임 종료
 							System.exit(0);
 						} else { // 대기실로 이동
@@ -275,7 +277,7 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 게임 패배
 					case "322":
-						int response3 = JOptionPane.showConfirmDialog(null, "게임 패배!\n 게임을 종료하시겠습니까?", "게임 패배", JOptionPane.YES_NO_OPTION);
+						int response3 = JOptionPane.showConfirmDialog(mainFrame, "게임 패배!\n 게임을 종료하시겠습니까?", "게임 패배", JOptionPane.YES_NO_OPTION);
 						if (response3 == JOptionPane.YES_OPTION) { // 게임 종료
 							System.exit(0);
 						} else { // 대기실로 이동

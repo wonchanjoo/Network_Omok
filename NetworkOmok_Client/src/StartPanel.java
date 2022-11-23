@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -16,6 +17,7 @@ public class StartPanel extends JPanel {
 	private Container container;
 	private CardLayout cardLayout;
 	
+	private JFrame mainFrame;
 	private WaitingRoomPanel waitingRoomPanel;
 	
 	private JTextField ipInput;
@@ -25,8 +27,9 @@ public class StartPanel extends JPanel {
 	
 	private Font font;
 	
-	public StartPanel(Container container) {
+	public StartPanel(Container container, JFrame mainFrame) {
 		this.setSize(1000, 600);
+		this.mainFrame = mainFrame;
 		this.container = container;
 		this.cardLayout = (CardLayout) container.getLayout();
 		this.setLayout(null);
@@ -97,7 +100,7 @@ public class StartPanel extends JPanel {
 			String ip_addr = ipInput.getText().trim();
 			String port_no = portInput.getText().trim();
 			
-			waitingRoomPanel = new WaitingRoomPanel(container, userName, ip_addr, port_no);
+			waitingRoomPanel = new WaitingRoomPanel(container, mainFrame, userName, ip_addr, port_no);
 			container.add(waitingRoomPanel, "waitingRoomPanel");
 			cardLayout.show(container, "waitingRoomPanel"); // 대기실 Panel로 변경
 		}

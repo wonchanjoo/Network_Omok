@@ -34,7 +34,7 @@ public class OmokClientMain extends JFrame {
 		container = this.getContentPane();
 		container.setLayout(cardLayout);
 		
-		startPanel = new StartPanel(container);
+		startPanel = new StartPanel(container, this);
 		
 		container.add(startPanel, "startPanel");
 		
