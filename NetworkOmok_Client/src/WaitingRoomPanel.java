@@ -33,8 +33,9 @@ public class WaitingRoomPanel extends JPanel {
 	private CardLayout cardLayout;
 	GamePanel gamePanel;
 	
+	public Vector<OmokRoom> omokRooms = new Vector<>();
 	public JList roomList;
-	public DefaultListModel roomModel; // JList에 보이는 실제 대기실 데이터
+	public DefaultListModel<String> roomModel; // JList에 보이는 실제 대기실 데이터
 	public JList allUserList;
 	public DefaultListModel allUserModel;
 	private CreateRoomFrame createRoomFrame;
@@ -220,8 +221,23 @@ public class WaitingRoomPanel extends JPanel {
 					
 					/* --------------- Code --------------- */
 					switch (chatMsg.code) {
-					// 백돌인지 흑돌인지 data에 들어있다.
+					// 방이 만들어졌을 때 방 정보가 전송된다. 
+					case "200":
+						int roomId = chatMsg.roomId;
+						String roomName = chatMsg.roomName;
+						int peopleCount = chatMsg.peopleCount; // 방 인원 수
+						
+						OmokRoom newRoom = new OmokRoom(roomId, chatMsg.UserName); // 새로운 방 만들기
+						newRoom.currentPeoples++; // 인원수 증가 (초깃값 0)
+						omokRooms.add(newRoom); // 방 리스트에 추가
+						
+						String roomStr = String.format("%20s%5d/%5d", chatMsg.roomName, newRoom.currentPeoples, chatMsg.peopleCount);
+						roomModel.addElement(roomStr); // 리스트 모델에 추가
+						
+						break;
+					// 게임 방에 접속
 					case "201":
+						cardLayout.show(container, "GamePanel");
 						omokPanel.setIsBlack(chatMsg.isBlack);
 						break;
 					// 게임 시작
