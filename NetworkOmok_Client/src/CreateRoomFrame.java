@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-public class RoomInfoFrame extends JFrame{
+public class CreateRoomFrame extends JFrame{
 	private WaitingRoomPanel waitingRoomPanel;
 	private Font font;
 	private Container container;
@@ -23,7 +23,7 @@ public class RoomInfoFrame extends JFrame{
 	private JCheckBox passwordCheckBox;
 	private JTextField inputPassword;
 	
-	public RoomInfoFrame(WaitingRoomPanel waitingRoomPanel) {
+	public CreateRoomFrame(WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
 		this.setBounds(0, 0, 500, 400);
 		Dimension frameSize = this.getSize();

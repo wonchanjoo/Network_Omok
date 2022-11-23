@@ -37,7 +37,7 @@ public class WaitingRoomPanel extends JPanel {
 	public DefaultListModel roomModel; // JList에 보이는 실제 대기실 데이터
 	public JList allUserList;
 	public DefaultListModel allUserModel;
-	private RoomInfoFrame roomInfoFrame;
+	private CreateRoomFrame createRoomFrame;
 	
 	private Socket socket; // 연결 소켓
 	private ObjectInputStream ois;
@@ -105,7 +105,6 @@ public class WaitingRoomPanel extends JPanel {
 				
 				//버튼 누르면 방 접속처럼 작동하기 위한 임시 코드, 방 접속 201 전송
 				ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
-				obj.roomId = "asdf";
 				sendObject(obj);
 			}
 		});
@@ -115,21 +114,28 @@ public class WaitingRoomPanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// 방 정보 입력 받을? JFrame 띄우기???
-			roomInfoFrame = new RoomInfoFrame(waitingRoomPanel);
+			createRoomFrame = new CreateRoomFrame(waitingRoomPanel);
 		}
 	}
 	
+	// 방 만들기 Frame에서 "만들기" 버튼을 누르면 실행되는 함수
+	// 방 정보를 받아와서 (인자로 받아온다) 서버에게 방을 만든다고 전송한다. 
 	public void createRoom(String roomName, String password) {
-		System.out.println("room name = " + roomName + ", password = " + password);
-		roomInfoFrame.dispose(); // 프레임 닫고
+		createRoomFrame.dispose(); // 프레임 닫기
 		
 		gamePanel = new GamePanel(container, waitingRoomPanel); // GamePanel 생성
 		container.add(gamePanel, "gamePanel");
 		cardLayout.show(container, "gamePanel"); // GamePanel로 패널 전환
 		
-		ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
-		obj.roomId = "asdf";
-		sendObject(obj); // 방 접속 메시지 서버로 전송
+		ChatMsg chatMsg = new ChatMsg(userName, "200", "방 만들기");
+		chatMsg.roomName = roomName;
+		chatMsg.password = password;
+		chatMsg.peopleCount = 2; // 일단 2명으로 설정
+		sendObject(chatMsg);
+		
+//		ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
+//		obj.roomId = "asdf";
+//		sendObject(obj); // 방 접속 메시지 서버로 전송
 	}
 	
 	/* -------------------- setter -------------------- */
