@@ -102,17 +102,28 @@ public class WaitingRoomPanel extends JPanel {
 			e.printStackTrace();
 		}
 		
-		// 일단 방 접속 버튼 누르면 gamePanel로 넘어가도록
+		// 방 접속 버튼 누르면
 		enterRoomBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				gamePanel = new GamePanel(container, waitingRoomPanel);
-				container.add(gamePanel, "gamePanel");
-				cardLayout.show(container, "gamePanel");
+				int selectedIndex = roomList.getSelectedIndex();
+				if(selectedIndex == -1) {
+					JOptionPane.showMessageDialog(mainFrame, "방을 선택하세요!", "error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				int id = omokRooms.get(selectedIndex).roomId;
+				ChatMsg chatMsg = new ChatMsg(userName, "201", "방 접속");
+				chatMsg.roomId = id;
+				chatMsg.UserName = userName;
+				sendObject(chatMsg); // roomId와 함께 방 접속 메시지 전송 
 				
-				//버튼 누르면 방 접속처럼 작동하기 위한 임시 코드, 방 접속 201 전송
-				ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
-				sendObject(obj);
+//				gamePanel = new GamePanel(container, waitingRoomPanel);
+//				container.add(gamePanel, "gamePanel");
+//				cardLayout.show(container, "gamePanel");
+//				
+//				//버튼 누르면 방 접속처럼 작동하기 위한 임시 코드, 방 접속 201 전송
+//				ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
+//				sendObject(obj);
 			}
 		});
 	}
@@ -144,15 +155,6 @@ public class WaitingRoomPanel extends JPanel {
 //		ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
 //		obj.roomId = "asdf";
 //		sendObject(obj); // 방 접속 메시지 서버로 전송
-	}
-	
-	class RoomListClick implements ListSelectionListener {
-		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			int index = roomList.getSelectedIndex(); // 선택된 리스트 요소의 인덱스
-			if(index == -1) return;
-			
-		}
 	}
 	
 	/* -------------------- setter -------------------- */
@@ -248,15 +250,25 @@ public class WaitingRoomPanel extends JPanel {
 						newRoom.currentPeoples++; // 인원수 증가 (초깃값 0)
 						omokRooms.add(newRoom); // 방 리스트에 추가
 						
-						String roomStr = String.format("%20s%5d/%5d", chatMsg.roomName, newRoom.currentPeoples, chatMsg.peopleCount);
-						System.out.println("roomStr = " + roomStr);
+						String roomStr = String.format("%10s   %d/%d", chatMsg.roomName, newRoom.currentPeoples, chatMsg.peopleCount);
 						roomModel.addElement(roomStr); // 리스트 모델에 추가
 						
 						break;
 					// 게임 방에 접속
 					case "201":
-						cardLayout.show(container, "GamePanel");
+						gamePanel = new GamePanel(container, waitingRoomPanel);
+						container.add(gamePanel, "gamePanel");
+						
+						omokPanel = gamePanel.omokPanel;
+						chatPanel = gamePanel.chatPanel;
+						omokPanel.roomId = chatMsg.roomId;
 						omokPanel.setIsBlack(chatMsg.isBlack);
+						
+						cardLayout.show(container, "gamePanel");
+						break;
+					// 게임 방에 접속 할 수 없는 경우
+					case "202":
+						JOptionPane.showMessageDialog(mainFrame, "방에 들어갈 수 없습니다.", "error", JOptionPane.ERROR_MESSAGE);
 						break;
 					// 게임 시작
 					case "300":

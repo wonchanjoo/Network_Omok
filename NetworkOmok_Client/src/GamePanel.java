@@ -23,8 +23,8 @@ public class GamePanel extends JPanel {
 	private Container container;
 	private CardLayout cardLayout;
 	private WaitingRoomPanel waitingRoomPanel;
-	private OmokPanel omokPanel;
-	private ChatPanel chatPanel;
+	public OmokPanel omokPanel;
+	public ChatPanel chatPanel;
 	
 	public GamePanel(Container container, WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
@@ -54,12 +54,5 @@ public class GamePanel extends JPanel {
 		// ex) 서버로부터 메시지 오면 채팅창에 append text, 바둑돌 놓기
 		waitingRoomPanel.setOmokPanel(omokPanel);
 		waitingRoomPanel.setChatPanel(chatPanel);
-		
-//		omokPane.addMouseMotionListener(new MouseAdapter() { // 오목판 좌표 +-13
-//			@Override
-//			public void mouseMoved(MouseEvent e) {
-//				System.out.println(e.getX() + " " + e.getY());
-//			}
-//		});
 	}
 }
