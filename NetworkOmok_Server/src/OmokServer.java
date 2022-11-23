@@ -447,7 +447,7 @@ public class OmokServer extends JFrame {
 								}
 							}
 							
-							obj = new ChatMsg("server", "300", player.elementAt(0).UserName + " " +player.elementAt(1).UserName);
+							obj = new ChatMsg("server", "300", currentRoom.player.elementAt(0) + " " + currentRoom.player.elementAt(1));
 							
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
@@ -464,7 +464,7 @@ public class OmokServer extends JFrame {
 							}
 							
 							AppendText("[" + roomId + "]방 게임 시작!!");
-							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + this.player.size());
+							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + currentRoom.player.size());
 						}
 						else {
 
