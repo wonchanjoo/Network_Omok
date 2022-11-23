@@ -402,6 +402,8 @@ public class OmokServer extends JFrame {
 						for(int i=0; i<RoomVector.size(); i++) {
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
 							if(omokRoom.player.size() == 2) {
+								ChatMsg obj = new ChatMsg("server", "202", "방이 꽉참");
+								oos.writeObject(obj);
 								exist = 1;
 								break;
 							}
