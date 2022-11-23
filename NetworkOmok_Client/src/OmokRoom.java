@@ -7,8 +7,8 @@ public class OmokRoom {
 	public String[] player = new String[2];
 	public Vector<String> viewer = new Vector<>();
 	
-	public OmokRoom(int roomId, String[] player) {
+	public OmokRoom(int roomId, String creater) {
 		this.roomId = roomId;
-		this.player = player;
+		this.player[0] = creater;
 	}
 }
