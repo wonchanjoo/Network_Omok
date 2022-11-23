@@ -247,10 +247,10 @@ public class WaitingRoomPanel extends JPanel {
 						int peopleCount = chatMsg.peopleCount; // 방 인원 수
 						
 						OmokRoom newRoom = new OmokRoom(roomId, chatMsg.UserName); // 새로운 방 만들기
-						newRoom.currentPeoples++; // 인원수 증가 (초깃값 0)
+						newRoom.peopleCount = peopleCount;
 						omokRooms.add(newRoom); // 방 리스트에 추가
 						
-						String roomStr = String.format("%10s   %d/%d", chatMsg.roomName, newRoom.currentPeoples, chatMsg.peopleCount);
+						String roomStr = String.format("%10s   %d/%d", chatMsg.roomName, 1, chatMsg.peopleCount);
 						roomModel.addElement(roomStr); // 리스트 모델에 추가
 						
 						break;

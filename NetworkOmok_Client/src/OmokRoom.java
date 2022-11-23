@@ -3,7 +3,7 @@ import java.util.Vector;
 public class OmokRoom {
 	public String roomName;
 	public int roomId;
-	public int currentPeoples = 0;
+	public int peopleCount = 0;
 	public Vector<String> player = new Vector<>();
 	public Vector<String> viewer = new Vector<>();
 	

@@ -378,7 +378,7 @@ public class OmokServer extends JFrame {
 						msg = String.format("[%s]님이 [%s]방을 만들었습니다.", cm.UserName, cm.data);
 						AppendText(msg); // server 화면에 출력
 						OmokRoom omokRoom = new OmokRoom(cm.roomId, cm.UserName);
-						omokRoom.currentPeoples = cm.peopleCount;
+						omokRoom.peopleCount = cm.peopleCount;
 						omokRoom.roomName = cm.roomName;
 						RoomVector.add(omokRoom);
 						this.roomId = omokRoom.roomId;
