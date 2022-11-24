@@ -111,10 +111,9 @@ public class WaitingRoomPanel extends JPanel {
 					JOptionPane.showMessageDialog(mainFrame, "방을 선택하세요!", "error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				int id = omokRooms.get(selectedIndex).roomId;
+				OmokRoom selectedRoom = omokRooms.get(selectedIndex);
 				ChatMsg chatMsg = new ChatMsg(userName, "201", "방 접속");
-				chatMsg.roomId = id;
-				chatMsg.UserName = userName;
+				chatMsg.roomId = selectedRoom.roomId; // roomId
 				sendObject(chatMsg); // roomId와 함께 방 접속 메시지 전송 
 				
 //				gamePanel = new GamePanel(container, waitingRoomPanel);
@@ -131,7 +130,7 @@ public class WaitingRoomPanel extends JPanel {
 	class CreateRoomBtnClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// 방 정보 입력 받을? JFrame 띄우기???
+			// 방 정보 입력 받을 JFrame 띄우기
 			createRoomFrame = new CreateRoomFrame(waitingRoomPanel);
 		}
 	}
@@ -151,10 +150,6 @@ public class WaitingRoomPanel extends JPanel {
 		chatMsg.password = password;
 		chatMsg.peopleCount = 2; // 일단 2명으로 설정
 		sendObject(chatMsg);
-		
-//		ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
-//		obj.roomId = "asdf";
-//		sendObject(obj); // 방 접속 메시지 서버로 전송
 	}
 	
 	/* -------------------- setter -------------------- */
@@ -246,29 +241,29 @@ public class WaitingRoomPanel extends JPanel {
 						String roomName = chatMsg.roomName;
 						int peopleCount = chatMsg.peopleCount; // 방 인원 수
 						
-						OmokRoom newRoom = new OmokRoom(roomId, chatMsg.UserName); // 새로운 방 만들기
+						OmokRoom newRoom = new OmokRoom(roomId, chatMsg.UserName); // 새로운 방 만들기, userName은 방 만든 사람의 이름
+						newRoom.roomName = roomName;
 						newRoom.peopleCount = peopleCount;
 						omokRooms.add(newRoom); // 방 리스트에 추가
 						
 						String roomStr = String.format("%10s   %d/%d", chatMsg.roomName, 1, chatMsg.peopleCount);
 						roomModel.addElement(roomStr); // 리스트 모델에 추가
-						
 						break;
 					// 게임 방에 접속
 					case "201":
-						gamePanel = new GamePanel(container, waitingRoomPanel);
+						gamePanel = new GamePanel(container, waitingRoomPanel); // GamePanel 생성
+						gamePanel.roomId = chatMsg.roomId; // GamePanel의 roomId 설정
 						container.add(gamePanel, "gamePanel");
 						
 						omokPanel = gamePanel.omokPanel;
 						chatPanel = gamePanel.chatPanel;
-						omokPanel.roomId = chatMsg.roomId;
 						omokPanel.setIsBlack(chatMsg.isBlack);
 						
-						cardLayout.show(container, "gamePanel");
+						cardLayout.show(container, "gamePanel"); // GamePanel로 전환
 						break;
 					// 게임 방에 접속 할 수 없는 경우
 					case "202":
-						JOptionPane.showMessageDialog(mainFrame, "방에 들어갈 수 없습니다.", "error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(mainFrame, chatMsg.data, "error", JOptionPane.ERROR_MESSAGE);
 						break;
 					// 게임 시작
 					case "300":

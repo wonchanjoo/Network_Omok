@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 
 public class OmokPanel extends JPanel {
 	private WaitingRoomPanel waitingRoomPanel;
-	public int roomId; // 현재 roomId;
 	private Font font;
 	public JLabel bStone; // 클릭할 때 보여주기용 바둑돌
 	public JLabel wStone; // 클릭할 때 보여주기용 바둑돌
