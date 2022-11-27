@@ -12,7 +12,7 @@ public class ChatMsg implements Serializable {
 	public Point point; // 바둑돌 놓을 때 사용
 	public boolean isBlack;
 	
-	public int roomId;
+	public long roomId;
 	public String roomName;
 	public String password;
 	public int peopleCount;

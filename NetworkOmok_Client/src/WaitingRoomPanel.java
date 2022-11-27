@@ -237,7 +237,7 @@ public class WaitingRoomPanel extends JPanel {
 					switch (chatMsg.code) {
 					// 방이 만들어졌을 때 방 정보가 전송된다. 
 					case "200":
-						int roomId = chatMsg.roomId;
+						long roomId = chatMsg.roomId;
 						String roomName = chatMsg.roomName;
 						int peopleCount = chatMsg.peopleCount; // 방 인원 수
 						
