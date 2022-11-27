@@ -4,11 +4,9 @@ public class OmokRoom {
 	public String roomName;
 	public int roomId;
 	public int peopleCount = 0;
-	public Vector<String> player = new Vector<>();
-	public Vector<String> viewer = new Vector<>();
+	public Vector<WaitingRoomPanel> userList = new Vector<>();
 	
-	public OmokRoom(int roomId, String creater) {
+	public OmokRoom(int roomId) {
 		this.roomId = roomId;
-		player.add(creater);
 	}
 }

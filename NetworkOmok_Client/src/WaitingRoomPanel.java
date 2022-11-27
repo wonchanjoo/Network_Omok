@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.Font;
 
 public class WaitingRoomPanel extends JPanel {
 	public String userName;
@@ -61,6 +62,7 @@ public class WaitingRoomPanel extends JPanel {
 		// 대기실 생성
 		roomModel = new DefaultListModel();
 		roomList = new JList(roomModel);
+		roomList.setFont(new Font("솔뫼 김대건 Medium", Font.PLAIN, 25));
 		roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 리스트가 하나만 선택될 수 있도록
 		roomList.setBounds(5, 5, 550, 600);
 		roomList.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // 리스트 경계선 생성
@@ -241,7 +243,7 @@ public class WaitingRoomPanel extends JPanel {
 						String roomName = chatMsg.roomName;
 						int peopleCount = chatMsg.peopleCount; // 방 인원 수
 						
-						OmokRoom newRoom = new OmokRoom(roomId, chatMsg.UserName); // 새로운 방 만들기, userName은 방 만든 사람의 이름
+						OmokRoom newRoom = new OmokRoom(roomId); // 새로운 방 만들기
 						newRoom.roomName = roomName;
 						newRoom.peopleCount = peopleCount;
 						omokRooms.add(newRoom); // 방 리스트에 추가
@@ -251,6 +253,11 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 게임 방에 접속
 					case "201":
+						for(int i=0; i<omokRooms.size(); i++) {
+							OmokRoom o = omokRooms.get(i);
+							if(o.roomId == chatMsg.roomId)
+								o.userList.add(waitingRoomPanel); // 해당 방에 나 자신 추가
+						}
 						gamePanel = new GamePanel(container, waitingRoomPanel); // GamePanel 생성
 						gamePanel.roomId = chatMsg.roomId; // GamePanel의 roomId 설정
 						container.add(gamePanel, "gamePanel");
@@ -275,7 +282,7 @@ public class WaitingRoomPanel extends JPanel {
 						
 						if(omokPanel.getIsBlack()) { // 흑돌인 경우
 							omokPanel.setStatus(true); // status를 true로 설정해 바둑돌을 놓을 수 있는 상태로 변경한다.
-							chatPanel.putBtn.setEnabled(true);
+							chatPanel.putBtn.setEnabled(true); // 착수 버튼 활성화
 						}
 						
 						chatPanel.returnBtn.setEnabled(true);
