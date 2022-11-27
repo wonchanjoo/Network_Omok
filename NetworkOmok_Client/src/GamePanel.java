@@ -20,7 +20,7 @@ import javax.swing.JSplitPane;
 
 
 public class GamePanel extends JPanel {
-	public int roomId; // 현재 roomId;
+	public long roomId; // 현재 roomId;
 	
 	private Container container;
 	private CardLayout cardLayout;

@@ -30,6 +30,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.Font;
 
 public class WaitingRoomPanel extends JPanel {
+	public long roomId;
 	public String userName;
 	private OmokPanel omokPanel;
 	private ChatPanel chatPanel;
@@ -43,7 +44,7 @@ public class WaitingRoomPanel extends JPanel {
 	public JList roomList;
 	public DefaultListModel<String> roomModel; // JList에 보이는 실제 대기실 데이터
 	public JList allUserList;
-	public DefaultListModel allUserModel;
+	public DefaultListModel<String> allUserModel;
 	private CreateRoomFrame createRoomFrame;
 	
 	private Socket socket; // 연결 소켓
@@ -117,14 +118,6 @@ public class WaitingRoomPanel extends JPanel {
 				ChatMsg chatMsg = new ChatMsg(userName, "201", "방 접속");
 				chatMsg.roomId = selectedRoom.roomId; // roomId
 				sendObject(chatMsg); // roomId와 함께 방 접속 메시지 전송 
-				
-//				gamePanel = new GamePanel(container, waitingRoomPanel);
-//				container.add(gamePanel, "gamePanel");
-//				cardLayout.show(container, "gamePanel");
-//				
-//				//버튼 누르면 방 접속처럼 작동하기 위한 임시 코드, 방 접속 201 전송
-//				ChatMsg obj = new ChatMsg(userName, "201", "방 접속");
-//				sendObject(obj);
 			}
 		});
 	}
@@ -180,6 +173,7 @@ public class WaitingRoomPanel extends JPanel {
 	public void sendChatMessage(String message) {
 		try {
 			ChatMsg chatMsg = new ChatMsg(userName, "400", message);
+			chatMsg.roomId = roomId;
 			oos.writeObject(chatMsg);
 			System.out.println(userName + " 400 " + message + " 전송");
 		} catch (Exception e) {
@@ -201,6 +195,7 @@ public class WaitingRoomPanel extends JPanel {
 			ChatMsg chatMsg = new ChatMsg(userName, "301", "point");
 			chatMsg.point = new Point(omokPanel.oldStone.getX(), omokPanel.oldStone.getY());
 			chatMsg.isBlack = omokPanel.getIsBlack();
+			chatMsg.roomId = roomId;
 			oos.writeObject(chatMsg);
 			omokPanel.setStatus(false);
 			System.out.println(userName + " 301 " + chatMsg.point + " 전송");
@@ -237,10 +232,10 @@ public class WaitingRoomPanel extends JPanel {
 					
 					/* --------------- Code --------------- */
 					switch (chatMsg.code) {
-					// 방이 만들어졌을 때 방 정보가 전송된다. 
+					// 어느 방이 만들어졌을 때 서버로부터 방 정보가 전송된다. 
 					case "200":
-						int roomId = chatMsg.roomId;
-						String roomName = chatMsg.roomName;
+						long roomId = chatMsg.roomId; // 방 ID
+						String roomName = chatMsg.roomName; // 방 이름
 						int peopleCount = chatMsg.peopleCount; // 방 인원 수
 						
 						OmokRoom newRoom = new OmokRoom(roomId); // 새로운 방 만들기
@@ -253,11 +248,14 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 게임 방에 접속
 					case "201":
+						roomId = chatMsg.roomId;
+						
 						for(int i=0; i<omokRooms.size(); i++) {
 							OmokRoom o = omokRooms.get(i);
 							if(o.roomId == chatMsg.roomId)
 								o.userList.add(waitingRoomPanel); // 해당 방에 나 자신 추가
 						}
+						
 						gamePanel = new GamePanel(container, waitingRoomPanel); // GamePanel 생성
 						gamePanel.roomId = chatMsg.roomId; // GamePanel의 roomId 설정
 						container.add(gamePanel, "gamePanel");
@@ -271,6 +269,20 @@ public class WaitingRoomPanel extends JPanel {
 					// 게임 방에 접속 할 수 없는 경우
 					case "202":
 						JOptionPane.showMessageDialog(mainFrame, chatMsg.data, "error", JOptionPane.ERROR_MESSAGE);
+						break;
+					// 서버로부터 전체 방 목록 전송된 경우
+					case "210":
+						break;
+					// 서버로부터 전체 접속자 목록 전송된 경우
+					// 접속자 이름이 띄어쓰기로 나누어진 하나의 문자열로 전송된다. 
+					case "211":
+						String str = chatMsg.data;
+						System.out.println("211 str = " + str);
+						StringTokenizer userSt = new StringTokenizer(str);
+						while(userSt.hasMoreTokens()) {
+							String user = userSt.nextToken();
+							allUserModel.addElement(user);
+						}
 						break;
 					// 게임 시작
 					case "300":
