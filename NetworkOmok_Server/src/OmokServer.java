@@ -401,18 +401,27 @@ public class OmokServer extends JFrame {
 					}
 					// 방 접속
 					else if(cm.code.matches("201")) { 
-						OmokRoom currentRoom = null;
+						//OmokRoom currentRoom = null;
 						OmokRoom findRoom = null;
 						
 						for(int i=0; i<RoomVector.size(); i++) {
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
 							// task : 비밀번호 처리도 해야함
-							if(cm.roomId == omokRoom.roomId) { // 클라이언트가 보낸 roomId를 비교해 해당 방을 찾는다
+							if(cm.roomId == omokRoom.roomId && omokRoom.player.size() <= 1) { // 클라이언트가 보낸 roomId를 비교해 해당 방을 찾는다
 								findRoom = omokRoom; // 찾은 방 저장
 							}
 						} // for문 끝
 						
 						this.roomId = cm.roomId;
+						
+						if(findRoom == null) {
+							msg = String.format("[%s]님은 [%s]방에 들어갈 수 없습니다!", cm.UserName, cm.roomId);
+							AppendText(msg); // server 화면에 출력
+							ChatMsg obj = new ChatMsg(UserName, "202", "방 접속 실패");
+							WriteOneObject(obj);
+							//WriteOne("202", "방 접속 실패");
+							continue;
+						}
 						
 						// player size = 0 이면 이번에 접속한 유저가 흑돌
 						if(findRoom.player.size() == 0) {
