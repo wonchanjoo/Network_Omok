@@ -2,9 +2,11 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,55 +40,63 @@ public class StartPanel extends JPanel {
 		JLabel omokLogoLabel = new JLabel("오목");
 		font  = new Font("솔뫼 김대건 Medium", Font.PLAIN, 50);
 		omokLogoLabel.setFont(font);
-		omokLogoLabel.setBounds(400, 60, 100, 90);
+		omokLogoLabel.setBounds(400, 100, 100, 90);
 		this.add(omokLogoLabel);
 		
 		// IP 입력
 		JLabel ipLabel = new JLabel("IP Address");
 		font = new Font("Gothic", Font.PLAIN, 15);
 		ipLabel.setFont(font);
-		ipLabel.setBounds(330, 190, 85, 30);
+		ipLabel.setBounds(330, 230, 85, 30);
 		this.add(ipLabel);
 		
 		ipInput = new JTextField();
 		ipInput.setHorizontalAlignment(SwingConstants.CENTER);
 		ipInput.setText("127.0.0.1");
 		ipInput.setColumns(10);
-		ipInput.setBounds(450, 190, 120, 33);
+		ipInput.setBounds(450, 230, 120, 33);
 		this.add(ipInput);
 		
 		// Port 입력
 		JLabel portLabel = new JLabel("Port Number");
 		portLabel.setFont(font);
-		portLabel.setBounds(330, 240, 85, 30);
+		portLabel.setBounds(330, 280, 85, 30);
 		this.add(portLabel);
 		
 		portInput = new JTextField();
 		portInput.setHorizontalAlignment(SwingConstants.CENTER);
 		portInput.setText("30000");
 		portInput.setColumns(10);
-		portInput.setBounds(450, 240, 120, 30);
+		portInput.setBounds(450, 280, 120, 30);
 		this.add(portInput);
 		
 		// user name 입력
 		JLabel userNameLabel = new JLabel("이름을 입력하세요.");
 		font = new Font("솔뫼 김대건 Medium", Font.PLAIN, 20);
 		userNameLabel.setFont(font);
-		userNameLabel.setBounds(380, 340, 160, 40);
+		userNameLabel.setBounds(380, 360, 160, 40);
 		this.add(userNameLabel);
 		
 		userNameInput = new JTextField();
 		userNameInput.setHorizontalAlignment(SwingConstants.CENTER);
-		userNameInput.setBounds(320, 390, 200, 40);
+		userNameInput.setBounds(320, 410, 200, 40);
 		userNameInput.addActionListener(new StartBtnAction());
 		this.add(userNameInput);
 
 		// 시작 버튼
 		startBtn = new JButton("시작");
-		startBtn.setBounds(530, 390, 70, 40);
+		startBtn.setBounds(530, 410, 70, 40);
 		startBtn.addActionListener(new StartBtnAction());
 		this.add(startBtn);
 		
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		ImageIcon omokTableImg = new ImageIcon("images\\start_background.png");
+		g.drawImage(omokTableImg.getImage(), 0, 0, this);
 	}
 	
 	class StartBtnAction implements ActionListener {

@@ -17,9 +17,12 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,6 +31,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.Font;
+import java.awt.Graphics;
 
 public class WaitingRoomPanel extends JPanel {
 	public long roomId;
@@ -41,9 +45,9 @@ public class WaitingRoomPanel extends JPanel {
 	GamePanel gamePanel;
 	
 	public Vector<OmokRoom> omokRooms = new Vector<>();
-	public JList roomList;
+	public JList<String> roomList;
 	public DefaultListModel<String> roomModel; // JList에 보이는 실제 대기실 데이터
-	public JList allUserList;
+	public JList<String> allUserList;
 	public DefaultListModel<String> allUserModel;
 	private CreateRoomFrame createRoomFrame;
 	
@@ -60,31 +64,60 @@ public class WaitingRoomPanel extends JPanel {
 		this.setSize(900, 650);
 		this.setLayout(null);
 		
-		// 대기실 생성
-		roomModel = new DefaultListModel();
-		roomList = new JList(roomModel);
-		roomList.setFont(new Font("솔뫼 김대건 Medium", Font.PLAIN, 25));
+		Color backgroundColor = new Color(233, 211, 180);
+		// 방 리스트 생성
+		JLabel roomListLabel = new JLabel("방 목록");
+		roomListLabel.setFont(new Font("솔뫼 김대건 Medium", Font.PLAIN, 40));
+		roomListLabel.setHorizontalAlignment(JLabel.CENTER);
+		roomListLabel.setOpaque(true);
+		roomListLabel.setBackground(backgroundColor);
+		roomListLabel.setBounds(130, 30, 200, 50);
+		this.add(roomListLabel);
+		
+		roomModel = new DefaultListModel<String>();
+		roomList = new JList<String>(roomModel);
+		roomList.setOpaque(true);
+		roomList.setBackground(backgroundColor);
+		roomList.setFont(new Font("맑은 고딕", Font.PLAIN, 22));
 		roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 리스트가 하나만 선택될 수 있도록
-		roomList.setBounds(5, 5, 550, 600);
+		roomList.setBounds(40, 105, 400, 470);
 		roomList.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // 리스트 경계선 생성
+		roomList.setCellRenderer(new DefaultListCellRenderer() {
+			@Override
+			public int getHorizontalAlignment() {
+				return CENTER;
+			}
+		});
 		this.add(roomList);
 		
 		// 접속자 리스트 생성
-		allUserModel = new DefaultListModel();
-		allUserList = new JList(allUserModel);
+		JLabel userListLabel = new JLabel("접속자");
+		userListLabel.setFont(new Font("솔뫼 김대건 Medium", Font.PLAIN, 40));
+		userListLabel.setHorizontalAlignment(JLabel.CENTER);
+		userListLabel.setOpaque(true);
+		userListLabel.setBackground(backgroundColor);
+		userListLabel.setBounds(600, 30, 200, 50);
+		this.add(userListLabel);
+		
+		allUserModel = new DefaultListModel<String>();
+		allUserList = new JList<String>(allUserModel);
+		allUserList.setOpaque(true);
+		allUserList.setBackground(backgroundColor);
+		allUserList.setFont(new Font("맑은 고딕", Font.PLAIN, 22));
 		allUserList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		allUserList.setBounds(560, 5, 320, 400);
+		allUserList.setBounds(535, 105, 320, 400);
+		allUserList.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		this.add(allUserList);
 		
 		// 방 만들기 버튼 생성
 		JButton createRoomBtn = new JButton("방 만들기");
-		createRoomBtn.setBounds(655, 450, 130, 50);
+		createRoomBtn.setBounds(550, 520, 130, 50);
 		createRoomBtn.addActionListener(new CreateRoomBtnClick());
 		this.add(createRoomBtn);
 		
 		// 방 접속 버튼 생성
 		JButton enterRoomBtn = new JButton("방 접속");
-		enterRoomBtn.setBounds(655, 520, 130, 50);
+		enterRoomBtn.setBounds(710, 520, 130, 50);
 		this.add(enterRoomBtn);
 		
 		try {
@@ -120,6 +153,14 @@ public class WaitingRoomPanel extends JPanel {
 				sendObject(chatMsg); // roomId와 함께 방 접속 메시지 전송 
 			}
 		});
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		ImageIcon omokTableImg = new ImageIcon("images\\waitingroom_background.png");
+		g.drawImage(omokTableImg.getImage(), 0, 0, this);
 	}
 	
 	class CreateRoomBtnClick implements ActionListener {

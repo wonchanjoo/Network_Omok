@@ -46,7 +46,8 @@ public class OmokPanel extends JPanel {
 	public OmokPanel(WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
 		this.setLayout(null);
-		this.setBackground(Color.WHITE);
+		this.setOpaque(true);
+		this.setBackground(new Color(233, 211, 180));
 		this.setVisible(true);
 		font = new Font("솔뫼 김대건 Medium", Font.PLAIN, 20);
 		

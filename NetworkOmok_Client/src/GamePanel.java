@@ -35,7 +35,6 @@ public class GamePanel extends JPanel {
 		
 		this.setSize(900, 650);
 		this.setLayout(new BorderLayout());
-		this.setBackground(Color.YELLOW);
 		
 		splitPane();
 	}
