@@ -298,6 +298,7 @@ public class WaitingRoomPanel extends JPanel {
 						String str = chatMsg.data;
 						System.out.println("211 str = " + str);
 						StringTokenizer userSt = new StringTokenizer(str);
+						allUserModel.removeAllElements();
 						while(userSt.hasMoreTokens()) {
 							String user = userSt.nextToken();
 							allUserModel.addElement(user);

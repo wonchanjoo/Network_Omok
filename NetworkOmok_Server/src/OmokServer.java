@@ -212,23 +212,11 @@ public class OmokServer extends JFrame {
 		public void Login() {
 			AppendText("새로운 참가자 " + UserName + " 입장.");
 			String data = "";
-			for (int i = 0; i < user_vc.size() - 1; i++) {
+			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
 				data += user.UserName + " ";
-			}
-			// 기존에 있던 유저들에게는 새로온 사람의 이름만 전송해주면 되고
-			// 새로 접속한 유저에게는 모든 사람의 이름을 전송해야 한다. 
-			WriteOne("211", data); // 새로 접속한 유저에게 모든 유저 정보 전송
-			WriteAll("211", UserName); // 모든 유저에게 새로 접속한 유저 정보 전송
-			
-			// 새로 접속한 유저에게 방 리스트 전송
-//			data = "";
-//			for(int i = 0; i < RoomVector.size(); i++) {
-//				OmokRoom o = RoomVector.elementAt(i);
-//				String s = o.roomId + " " + o.roomName + " " + o.peopleCount;
-//				data += s + "@";
-//			}
-//			WriteOne("210", data);
+			} 
+			WriteAll("211", data); // 모든 유저 이름 전송
 		}
 
 		public void Logout() {
@@ -418,6 +406,7 @@ public class OmokServer extends JFrame {
 							msg = String.format("[%s]님은 [%s]방에 들어갈 수 없습니다!", cm.UserName, cm.roomId);
 							AppendText(msg); // server 화면에 출력
 							ChatMsg obj = new ChatMsg(UserName, "202", "방 접속 실패");
+							obj.roomId = cm.roomId;
 							WriteOneObject(obj);
 							//WriteOne("202", "방 접속 실패");
 							continue;
