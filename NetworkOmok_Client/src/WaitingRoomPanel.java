@@ -173,7 +173,7 @@ public class WaitingRoomPanel extends JPanel {
 	public void sendChatMessage(String message) {
 		try {
 			ChatMsg chatMsg = new ChatMsg(userName, "400", message);
-			chatMsg.roomId = roomId;
+			chatMsg.roomId = gamePanel.roomId;
 			oos.writeObject(chatMsg);
 			System.out.println(userName + " 400 " + message + " 전송");
 		} catch (Exception e) {

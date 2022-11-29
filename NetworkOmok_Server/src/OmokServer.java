@@ -498,8 +498,6 @@ public class OmokServer extends JFrame {
 					}
 					// 301 마우스 좌표
 					else if (cm.code.matches("301")) { //MouseEvent
-						System.out.println("room ID = " + cm.roomId);
-						System.out.println("role = " + cm.role);
 						int boardX = (cm.point.x-37)/27;
 						int boardY = (cm.point.y-110)/27;
 						boolean winner = false;
@@ -529,7 +527,6 @@ public class OmokServer extends JFrame {
 						msg1.point = cm.point;
 						msg1.role = cm.role;
 						msg1.roomId = cm.roomId;
-						System.out.println("user_vc size = " + user_vc.size());
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
 							if(cm.roomId == user.roomId) {
@@ -609,8 +606,11 @@ public class OmokServer extends JFrame {
 							//WriteAll(msg + "\n"); // Write All
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
-								if (user != this && user.UserStatus == "O" && cm.roomId == user.roomId)
-									user.oos.writeObject(new ChatMsg(UserName, "400", cm.data));
+								if (user != this && cm.roomId == user.roomId) {
+									ChatMsg obj = new ChatMsg(UserName, "400", cm.data);
+									obj.roomId = cm.roomId;
+									user.oos.writeObject(obj);
+								}
 							}
 						//}
 					}
