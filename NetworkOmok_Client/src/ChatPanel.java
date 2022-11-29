@@ -13,6 +13,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import java.awt.Font;
 
 public class ChatPanel extends JPanel{
 	private WaitingRoomPanel waitingRoomPanel;
@@ -38,6 +39,7 @@ public class ChatPanel extends JPanel{
 		
 		// 채팅창
 		textArea = new JTextPane();
+		textArea.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
 		textArea.setBounds(5, 300, 315, 270);
 		this.add(textArea);
 		
@@ -74,8 +76,9 @@ public class ChatPanel extends JPanel{
 	}
 	
 	// 채팅창 좌측에 메시지 출력
-	public void appendChatMessageLeft(String msg) {
+	public void appendChatMessageLeft(String userName, String msg) {
 		msg = msg.trim(); // 앞 뒤 공백 제거
+		String str = String.format("[%s] %s", userName, msg);
 		int len = textArea.getDocument().getLength();
 		StyledDocument doc = textArea.getStyledDocument();
 		SimpleAttributeSet left = new SimpleAttributeSet();
@@ -83,7 +86,7 @@ public class ChatPanel extends JPanel{
 		StyleConstants.setForeground(left, Color.BLACK);
 		doc.setParagraphAttributes(doc.getLength(), 1, left, false);
 		try {
-			doc.insertString(doc.getLength(), msg+"\n", left );
+			doc.insertString(doc.getLength(), str+"\n", left );
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}

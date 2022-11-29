@@ -413,7 +413,7 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 채팅 메시지
 					case "400":
-						chatPanel.appendChatMessageLeft(chatMsg.data);
+						chatPanel.appendChatMessageLeft(chatMsg.UserName, chatMsg.data);
 						break;
 					// 게임 초대
 					case "500":
