@@ -612,6 +612,24 @@ public class OmokServer extends JFrame {
 							}
 						//}
 					}
+					else if (cm.code.matches("410")) { //방 접속자 목록
+						OmokRoom findRoom = null;
+						String data = "";
+						for(int i=0; i<RoomVector.size(); i++) {
+							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
+							if(cm.roomId == omokRoom.roomId) { // 클라이언트가 보낸 roomId를 비교해 해당 방을 찾는다
+								findRoom = omokRoom; // 찾은 방 저장
+								break;
+							}
+						}
+						for(int j=0; j<findRoom.player.size(); j++) {
+							data += findRoom.player.elementAt(j) + " ";
+						}
+						System.out.println(data);
+						WriteAll("410", data); // 방에 접속한 플레이어 이름 전송
+						
+						//viewer 이름도 전송해 줘야함.
+					}
 					else if (cm.code.matches("500")) { //게임 초대
 						String str = "[" + cm.UserName + "]님이 [" + cm.data + "]님을 초대하셨습니다.";
 						AppendText(str);
