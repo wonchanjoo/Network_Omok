@@ -156,10 +156,12 @@ public class OmokServer extends JFrame {
 	// User 당 생성되는 Thread
 	// Read One 에서 대기 -> Write All
 	class UserService extends Thread {
+		public final int black = 0;
+		public final int white = 1;
+		public final int view = 2;
+		
 		private InputStream is;
 		private OutputStream os;
-		private DataInputStream dis;
-		private DataOutputStream dos;
 
 		private ObjectInputStream ois;
 		private ObjectOutputStream oos;
@@ -171,6 +173,7 @@ public class OmokServer extends JFrame {
 		public Vector<UserService> player = new Vector<>();
 		public long roomId;
 		public boolean isBlack = false;
+		public int role;
 
 		public UserService(Socket client_socket) {
 			// TODO Auto-generated constructor stub
@@ -217,6 +220,15 @@ public class OmokServer extends JFrame {
 			// 새로 접속한 유저에게는 모든 사람의 이름을 전송해야 한다. 
 			WriteOne("211", data); // 새로 접속한 유저에게 모든 유저 정보 전송
 			WriteAll("211", UserName); // 모든 유저에게 새로 접속한 유저 정보 전송
+			
+			// 새로 접속한 유저에게 방 리스트 전송
+//			data = "";
+//			for(int i = 0; i < RoomVector.size(); i++) {
+//				OmokRoom o = RoomVector.elementAt(i);
+//				String s = o.roomId + " " + o.roomName + " " + o.peopleCount;
+//				data += s + "@";
+//			}
+//			WriteOne("210", data);
 		}
 
 		public void Logout() {
@@ -254,24 +266,6 @@ public class OmokServer extends JFrame {
 //					user.WriteOne(str);
 //			}
 //		}
-
-		// Windows 처럼 message 제외한 나머지 부분은 NULL 로 만들기 위한 함수
-		public byte[] MakePacket(String msg) {
-			byte[] packet = new byte[BUF_LEN];
-			byte[] bb = null;
-			int i;
-			for (i = 0; i < BUF_LEN; i++)
-				packet[i] = 0;
-			try {
-				bb = msg.getBytes("euc-kr");
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			for (i = 0; i < bb.length; i++)
-				packet[i] = bb[i];
-			return packet;
-		}
 
 		// UserService Thread가 담당하는 Client 에게 1:1 전송
 		public void WriteOne(String code, String data) {
@@ -315,6 +309,7 @@ public class OmokServer extends JFrame {
 				Logout(); // 에러가난 현재 객체를 벡터에서 지운다
 			}
 		}
+		
 		public void WriteOneObject(Object ob) {
 			try {
 			    oos.writeObject(ob);
@@ -400,72 +395,69 @@ public class OmokServer extends JFrame {
 						// 임시로 처음 들어온 사람은 흑돌이라고 전송해준다
 						this.isBlack = true;
 						ChatMsg obj = new ChatMsg("server", "201", "흑돌");
-						obj.isBlack = true;
+						obj.role = obj.black; // 흑돌
 						obj.roomId = roomId;
 						oos.writeObject(obj);
 					}
-					else if(cm.code.matches("201")) { // 방 접속
-						int exist = 0;
-						//isBlack = cm.isBlack; //change
-						
+					// 방 접속
+					else if(cm.code.matches("201")) { 
 						OmokRoom currentRoom = null;
+						OmokRoom findRoom = null;
 						
 						for(int i=0; i<RoomVector.size(); i++) {
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
 							// task : 비밀번호 처리도 해야함
-							if(cm.roomId == omokRoom.roomId) {
-								if(omokRoom.player.size() == 2) {
-									ChatMsg obj = new ChatMsg("server", "202", "방이 꽉참");
-									oos.writeObject(obj);
-									exist = 1;
-									break;
-								}
-								else {
-									omokRoom.player.add(cm.UserName);
-									//omokRoom.currentPeoples++;
-									this.roomId = omokRoom.roomId;
-									currentRoom = omokRoom;
-									break;
-								}
+							if(cm.roomId == omokRoom.roomId) { // 클라이언트가 보낸 roomId를 비교해 해당 방을 찾는다
+								findRoom = omokRoom; // 찾은 방 저장
 							}
+						} // for문 끝
+						
+						this.roomId = cm.roomId;
+						
+						// player size = 0 이면 이번에 접속한 유저가 흑돌
+						if(findRoom.player.size() == 0) {
+							ChatMsg obj = new ChatMsg(UserName, "201", "흑돌");
+							obj.role = obj.black;
+							obj.roomId = findRoom.roomId;
+							WriteOneObject(obj);
+							findRoom.player.add(UserName); // player 리스트에 추가
 						}
-						if(exist==1) continue;
+						// player size = 1 이면 이번에 접속한 유저가 백돌
+						else if(findRoom.player.size() == 1) {
+							ChatMsg obj = new ChatMsg(UserName, "201", "백돌");
+							obj.role = obj.white;
+							obj.roomId = findRoom.roomId;
+							WriteOneObject(obj);
+							findRoom.player.add(UserName); // player 리스트에 추가
+						}
+						
 						msg = String.format("[%s]님이 [%s]방에 접속하셨습니다.", cm.UserName, cm.data);
 						AppendText(msg); // server 화면에 출력
 						
-						//this.player.add(this);
-						//this.roomId = cm.roomId;
-						
+						// roomId가 같은 유저들에게 새로운 유저 접속 정보 전송
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
 							if(user!=this && roomId == user.roomId) {
-								//this.isBlack = false;
-								//user.player.add(this);
-								//this.player.add(user);
 								msg = "[" + UserName + "]님이 입장 하였습니다.\n";
 								user.oos.writeObject(new ChatMsg("server", "400", msg)); //change
 							}
 						}
 						
-						if(currentRoom.player.size() == 2) { //게임 시작
-							this.isBlack = false;
-							ChatMsg obj = new ChatMsg("server", "201", "백돌");
-							obj.isBlack = false;
-							oos.writeObject(obj);
-		
-							obj = new ChatMsg("server", "400", "게임 시작!!"); //게임 시작 메시지를 방에 있는 모든 object에게 뿌림
+						// player가 2명이 300 게임 시작 전송
+						if(findRoom.player.size() == 2) { //게임 시작
+							ChatMsg obj = new ChatMsg("server", "400", "게임 시작!!"); //게임 시작 메시지를 방에 있는 모든 object에게 뿌림
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
-								if(roomId == user.roomId) {
+								if(findRoom.roomId == user.roomId) {
 									user.oos.writeObject(obj);
 								}
 							}
 							
-							obj = new ChatMsg("server", "300", currentRoom.player.elementAt(0) + " " + currentRoom.player.elementAt(1));
+							obj = new ChatMsg("server", "300", findRoom.player.elementAt(0) + " " + findRoom.player.elementAt(1));
 							
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
-								if(roomId == cm.roomId) {
+								if(findRoom.roomId == cm.roomId) {
 									user.oos.writeObject(obj);
 								}
 							}
@@ -478,10 +470,10 @@ public class OmokServer extends JFrame {
 							}
 							
 							AppendText("[" + roomId + "]방 게임 시작!!");
-							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + currentRoom.player.size());
+							//AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + currentRoom.player.size());
+							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + findRoom.player.size());
 						}
-						else {
-
+						else { // 아직 player가 2명이 안 된 경우
 							ChatMsg obj = new ChatMsg("server", "400", "다른 참가자가 들어올 때 까지 잠시만 기다려 주세요...");
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
@@ -489,16 +481,11 @@ public class OmokServer extends JFrame {
 									user.oos.writeObject(obj);
 								}
 							}
-							this.isBlack = true;
-							obj = new ChatMsg("server", "201", "흑돌");
-							//obj1.roomId = this.roomId;
-							//obj1.player.add(this);
-							obj.isBlack = true;
-							oos.writeObject(obj);
 							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + this.player.size());
 						}
-					}
-					else if (cm.code.matches("210")) { //방 목록 전송(처음 클라이언트가 접속할 때 방 목록 뿌려주기용)
+					} // 201 방 접속 끝
+					// 210 방 목록 전송(처음 클라이언트가 접속할 때 방 목록 뿌려주기용)
+					else if (cm.code.matches("210")) { 
 						ChatMsg obj = new ChatMsg("server", "210", "방 목록");
 						for(int i=0; i<RoomVector.size(); i++) {
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
@@ -509,39 +496,43 @@ public class OmokServer extends JFrame {
 							oos.writeObject(obj);
 						}
 					}
+					// 301 마우스 좌표
 					else if (cm.code.matches("301")) { //MouseEvent
+						System.out.println("room ID = " + cm.roomId);
+						System.out.println("role = " + cm.role);
 						int boardX = (cm.point.x-37)/27;
 						int boardY = (cm.point.y-110)/27;
 						boolean winner = false;
 				
-						//착수 거부, 33도 여기서 처리?
+						//착수 거부, 33도 여기서 처리? -> 클라이언트가 바둑돌 위치를 가지고 있지 않아서 서버에서 처리해야될듯 합니당
 						if(board[boardX][boardY] != 0) {
 							ChatMsg msg1 = new ChatMsg("server", "302", "location error");
 							oos.writeObject(msg1);
 							continue;
 						}
 						
-						String blwr = cm.isBlack ? "Black" : "White";
+						//String blwr = cm.isBlack ? "Black" : "White";
 
-						System.out.println(blwr + " : boardX = " + boardX + " boardY = " + boardY);
+						//System.out.println(blwr + " : boardX = " + boardX + " boardY = " + boardY);
 						
-						if(this.isBlack) {
-						//if(cm.isBlack) {
+						if(this.role == black) {
 							board[boardX][boardY] = 1;
 							winner = CheckOmok(1);
 						}
-						else {
+						else if(this.role == white){
 							board[boardX][boardY] = 2;
 							winner = CheckOmok(2);
 						}
 						
 						//좌표를 모든 참가자에게 뿌려준다.
 						ChatMsg msg1 = new ChatMsg(cm.UserName, "301", "좌표");
-						msg1.isBlack = cm.isBlack;
 						msg1.point = cm.point;
+						msg1.role = cm.role;
+						msg1.roomId = cm.roomId;
+						System.out.println("user_vc size = " + user_vc.size());
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
-							if(roomId == user.roomId) {
+							if(cm.roomId == user.roomId) {
 								user.oos.writeObject(msg1);
 							}
 						}
@@ -551,7 +542,7 @@ public class OmokServer extends JFrame {
 							oos.writeObject(new ChatMsg("server", "321", "Win"));
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
-								if(user!=this && roomId == user.roomId) {
+								if(user!=this && cm.roomId == user.roomId) {
 									user.oos.writeObject(new ChatMsg("server", "322", "lose"));
 									break;
 								}
@@ -614,49 +605,11 @@ public class OmokServer extends JFrame {
 					else if (cm.code.matches("400")) { //chatting
 						msg = String.format("[%s] %s", cm.UserName, cm.data);
 						AppendText(msg); // server 화면에 출력
-//						String[] args = msg.split(" "); // 단어들을 분리한다.
-//						if (args.length == 1) { // Enter key 만 들어온 경우 Wakeup 처리만 한다.
-//							UserStatus = "O";
-//						} else if (args[1].matches("/exit")) {
-//							Logout();
-//							break;
-//						} else if (args[1].matches("/list")) {
-//							WriteOne("User list\n");
-//							WriteOne("Name\tStatus\n");
-//							WriteOne("-----------------------------\n");
-//							for (int i = 0; i < user_vc.size(); i++) {
-//								UserService user = (UserService) user_vc.elementAt(i);
-//								WriteOne(user.UserName + "\t" + user.UserStatus + "\n");
-//							}
-//							WriteOne("-----------------------------\n");
-//						}
-//						else if (args[1].matches("/sleep")) {
-//							UserStatus = "S";
-//						} else if (args[1].matches("/wakeup")) {
-//							UserStatus = "O";
-//						} else if (args[1].matches("/to")) { // 귓속말
-//							for (int i = 0; i < user_vc.size(); i++) {
-//								UserService user = (UserService) user_vc.elementAt(i);
-//								if (user.UserName.matches(args[2]) && user.UserStatus.matches("O")) {
-//									String msg2 = "";
-//									for (int j = 3; j < args.length; j++) {// 실제 message 부분
-//										msg2 += args[j];
-//										if (j < args.length - 1)
-//											msg2 += " ";
-//									}
-//									// /to 빼고.. [귓속말] [user1] Hello user2..
-//									user.WritePrivate(args[0] + " " + msg2 + "\n");
-//									//user.WriteOne("[귓속말] " + args[0] + " " + msg2 + "\n");
-//									break;
-//								}
-//							}
-//						}
-						//else { // 일반 채팅 메시지
 							UserStatus = "O";
 							//WriteAll(msg + "\n"); // Write All
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
-								if (user != this && user.UserStatus == "O" && roomId == user.roomId)
+								if (user != this && user.UserStatus == "O" && cm.roomId == user.roomId)
 									user.oos.writeObject(new ChatMsg(UserName, "400", cm.data));
 							}
 						//}

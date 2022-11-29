@@ -16,6 +16,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class OmokPanel extends JPanel {
+	public final int black = 0;
+	public final int white = 1;
+	public final int view = 2;
+	
 	private WaitingRoomPanel waitingRoomPanel;
 	private Font font;
 	public JLabel bStone; // 클릭할 때 보여주기용 바둑돌
@@ -23,7 +27,7 @@ public class OmokPanel extends JPanel {
 	public JLabel blackPlayerName;
 	public JLabel whitePlayerName;
 	
-	private boolean isBlack = false;
+	public int role;
 	private boolean status = false;
 	public JLabel oldStone;
 	
@@ -93,13 +97,7 @@ public class OmokPanel extends JPanel {
 		this.addMouseListener(new omokTableClickListener());
 	}
 	
-	/* --------------- Getter / Setter --------------- */
-	public boolean getIsBlack() {
-		return isBlack;
-	}
-	public void setIsBlack(boolean isBlack) {
-		this.isBlack = isBlack;
-	}
+	
 	public boolean getStatus() {
 		return status;
 	}
@@ -117,8 +115,8 @@ public class OmokPanel extends JPanel {
 	}
 	
 	// 서버로부터 전달된 좌표에 흑돌 / 백돌 표시
-	public void putStone(int x, int y, boolean isBlack) {
-		if(isBlack) {
+	public void putStone(int x, int y, int role) {
+		if(role == black) {
 			JLabel blackStone = new JLabel(new ImageIcon(resizeBlackImg));
 			blackStone.setBounds(x, y, 27, 27);
 			OmokPanel.this.add(blackStone);
@@ -151,12 +149,12 @@ public class OmokPanel extends JPanel {
 			x = getStoneX(x);
 			y = getStoneY(y);
 			
-			if(isBlack) { // 자신이 흑돌인 경우
+			if(role == black) { // 자신이 흑돌인 경우
 				bStone.setLocation(x - 13, y - 13);
 				oldStone = bStone; // 현재 바둑돌 저장
 				OmokPanel.this.add(bStone);
 			}
-			else { // 자신이 백돌인 경우
+			else if(role == white) { // 자신이 백돌인 경우
 				wStone.setLocation(x - 13, y - 13);
 				oldStone = wStone; // 현재 바둑돌 저장
 				OmokPanel.this.add(wStone);

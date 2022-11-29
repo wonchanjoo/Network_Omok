@@ -184,7 +184,7 @@ public class WaitingRoomPanel extends JPanel {
 	// Server에게 301 마우스 좌표 전송
 	public void sendMousePoint() {
 		// OmokPanel의 보여주기용 바둑돌 떼어내기
-		if(omokPanel.getIsBlack()) // 흑돌이면
+		if(omokPanel.role == omokPanel.black) // 흑돌이면
 			omokPanel.remove(omokPanel.bStone); // 흑돌 떼어내기
 		else //  백돌이면
 			omokPanel.remove(omokPanel.wStone); // 백돌 떼어내기
@@ -194,8 +194,8 @@ public class WaitingRoomPanel extends JPanel {
 		try {
 			ChatMsg chatMsg = new ChatMsg(userName, "301", "point");
 			chatMsg.point = new Point(omokPanel.oldStone.getX(), omokPanel.oldStone.getY());
-			chatMsg.isBlack = omokPanel.getIsBlack();
-			chatMsg.roomId = roomId;
+			chatMsg.role = omokPanel.role;
+			chatMsg.roomId = gamePanel.roomId;
 			oos.writeObject(chatMsg);
 			omokPanel.setStatus(false);
 			System.out.println(userName + " 301 " + chatMsg.point + " 전송");
@@ -205,6 +205,12 @@ public class WaitingRoomPanel extends JPanel {
 	}
 	
 	class ListenNetwork extends Thread {
+		public ListenNetwork() {
+			// 방 목록 달라는 메시지 전송
+			ChatMsg roomlist = new ChatMsg(userName, "210", "roomList");
+			sendObject(roomlist);
+		}
+		
 		public void run() {
 			// 서버로부터 메시지를 받는다.
 			while(true) {
@@ -224,7 +230,7 @@ public class WaitingRoomPanel extends JPanel {
 					
 					if(obj instanceof ChatMsg) {
 						chatMsg = (ChatMsg) obj;
-						msg = String.format("[%s]\n%s %s 받음", chatMsg.UserName, chatMsg.code, chatMsg.data);
+						msg = String.format("%s %s 받음", chatMsg.code, chatMsg.data);
 						System.out.println(msg);
 					} else {
 						continue;
@@ -249,6 +255,7 @@ public class WaitingRoomPanel extends JPanel {
 					// 게임 방에 접속
 					case "201":
 						roomId = chatMsg.roomId;
+						System.out.println("201 room Id = " + roomId);
 						
 						for(int i=0; i<omokRooms.size(); i++) {
 							OmokRoom o = omokRooms.get(i);
@@ -262,7 +269,8 @@ public class WaitingRoomPanel extends JPanel {
 						
 						omokPanel = gamePanel.omokPanel;
 						chatPanel = gamePanel.chatPanel;
-						omokPanel.setIsBlack(chatMsg.isBlack);
+						//omokPanel.setIsBlack(chatMsg.isBlack);
+						omokPanel.role = chatMsg.role;
 						
 						cardLayout.show(container, "gamePanel"); // GamePanel로 전환
 						break;
@@ -272,6 +280,17 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 서버로부터 전체 방 목록 전송된 경우
 					case "210":
+						long roomId2 = chatMsg.roomId; // 방 ID
+						String roomName2 = chatMsg.roomName; // 방 이름
+						int peopleCount2 = chatMsg.peopleCount; // 방 인원 수
+						
+						OmokRoom newRoom2 = new OmokRoom(roomId2); // 새로운 방 만들기
+						newRoom2.roomName = roomName2;
+						newRoom2.peopleCount = peopleCount2;
+						omokRooms.add(newRoom2); // 방 리스트에 추가
+						
+						String roomStr2 = String.format("%10s   %d/%d", chatMsg.roomName, 1, chatMsg.peopleCount);
+						roomModel.addElement(roomStr2); // 리스트 모델에 추가
 						break;
 					// 서버로부터 전체 접속자 목록 전송된 경우
 					// 접속자 이름이 띄어쓰기로 나누어진 하나의 문자열로 전송된다. 
@@ -289,10 +308,10 @@ public class WaitingRoomPanel extends JPanel {
 						// 흑돌 백돌 이름 가져와서 화면에 표시
 						String userNames = chatMsg.data;
 						StringTokenizer st = new StringTokenizer(userNames);
-						omokPanel.whitePlayerName.setText(st.nextToken());
 						omokPanel.blackPlayerName.setText(st.nextToken());
+						omokPanel.whitePlayerName.setText(st.nextToken());
 						
-						if(omokPanel.getIsBlack()) { // 흑돌인 경우
+						if(omokPanel.role == omokPanel.black) { // 흑돌인 경우
 							omokPanel.setStatus(true); // status를 true로 설정해 바둑돌을 놓을 수 있는 상태로 변경한다.
 							chatPanel.putBtn.setEnabled(true); // 착수 버튼 활성화
 						}
@@ -302,8 +321,8 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 서버로부터 계산된 마우스 이벤트
 					case "301":
-						omokPanel.putStone(chatMsg.point.x, chatMsg.point.y, chatMsg.isBlack);
-						if(chatMsg.isBlack == omokPanel.getIsBlack()) // 내가 보낸 좌표면
+						omokPanel.putStone(chatMsg.point.x, chatMsg.point.y, chatMsg.role);
+						if(chatMsg.role == omokPanel.role) // 내가 보낸 좌표면
 							omokPanel.setStatus(false); // 내 차례가 아니므로 false
 						else { // 상대방이 보낸 좌표면
 							omokPanel.setStatus(true); // 내 차례므로 true
