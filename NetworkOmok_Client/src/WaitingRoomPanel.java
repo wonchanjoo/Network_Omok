@@ -321,6 +321,12 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 서버로부터 전체 방 목록 전송된 경우
 					case "210":
+						// 서버가 처음부터 방 목록 새로 보내주는 경우 다 지우고 다시 받아야 함
+						if(chatMsg.data.equals("init")) {
+							omokRooms.removeAllElements();
+							roomModel.removeAllElements();
+						}
+						
 						long roomId2 = chatMsg.roomId; // 방 ID
 						String roomName2 = chatMsg.roomName; // 방 이름
 						int peopleCount2 = chatMsg.peopleCount; // 방 인원 수
@@ -332,6 +338,8 @@ public class WaitingRoomPanel extends JPanel {
 						
 						String roomStr2 = String.format("%10s   %d/%d", chatMsg.roomName, 1, chatMsg.peopleCount);
 						roomModel.addElement(roomStr2); // 리스트 모델에 추가
+						
+						repaint();
 						break;
 					// 서버로부터 전체 접속자 목록 전송된 경우
 					// 접속자 이름이 띄어쓰기로 나누어진 하나의 문자열로 전송된다. 
