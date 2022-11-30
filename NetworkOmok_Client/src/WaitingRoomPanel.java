@@ -307,6 +307,8 @@ public class WaitingRoomPanel extends JPanel {
 						omokPanel.role = chatMsg.role;
 						
 						cardLayout.show(container, "gamePanel"); // GamePanel로 전환
+						
+						gamePanel.roomUserList();
 						break;
 					// 게임 방에 접속 할 수 없는 경우
 					case "202":
@@ -432,6 +434,16 @@ public class WaitingRoomPanel extends JPanel {
 					// 채팅 메시지
 					case "400":
 						chatPanel.appendChatMessageLeft(chatMsg.UserName, chatMsg.data);
+						break;
+					// 게임 방 전체 접속자
+					case "410":
+						chatPanel.roomUserModel.removeAllElements();
+						String allUser = chatMsg.data;
+						StringTokenizer st2 = new StringTokenizer(allUser);
+						while(st2.hasMoreElements()) {
+							String name = st2.nextToken();
+							chatPanel.roomUserModel.addElement(name);
+						}
 						break;
 					// 게임 초대
 					case "500":

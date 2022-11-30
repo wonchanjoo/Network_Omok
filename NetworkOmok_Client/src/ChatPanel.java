@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -19,6 +20,7 @@ public class ChatPanel extends JPanel{
 	private WaitingRoomPanel waitingRoomPanel;
 	
 	private JList<String> userList;
+	public DefaultListModel<String> roomUserModel;
 	
 	private JTextPane textArea;
 	private JTextField textInput;
@@ -33,7 +35,8 @@ public class ChatPanel extends JPanel{
 		this.setBackground(Color.LIGHT_GRAY);
 		
 		// 접속자 리스트
-		userList = new JList<String>();
+		roomUserModel = new DefaultListModel<>();
+		userList = new JList<String>(roomUserModel);
 		userList.setBounds(5, 5, 315, 230);
 		this.add(userList);
 		

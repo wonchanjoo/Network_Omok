@@ -56,4 +56,10 @@ public class GamePanel extends JPanel {
 		waitingRoomPanel.setOmokPanel(omokPanel);
 		waitingRoomPanel.setChatPanel(chatPanel);
 	}
+	
+	public void roomUserList() {
+		ChatMsg chatMsg = new ChatMsg(waitingRoomPanel.userName, "410", "userList");
+		chatMsg.roomId = this.roomId;
+		waitingRoomPanel.sendObject(chatMsg);
+	}
 }
