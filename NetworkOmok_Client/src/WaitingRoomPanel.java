@@ -173,7 +173,7 @@ public class WaitingRoomPanel extends JPanel {
 	
 	// 방 만들기 Frame에서 "만들기" 버튼을 누르면 실행되는 함수
 	// 방 정보를 받아와서 (인자로 받아온다) 서버에게 방을 만든다고 전송한다. 
-	public void createRoom(String roomName, String password) {
+	public void createRoom(String roomName, String password, int peopleCount) {
 		createRoomFrame.dispose(); // 프레임 닫기
 		
 		gamePanel = new GamePanel(container, waitingRoomPanel); // GamePanel 생성
@@ -184,7 +184,7 @@ public class WaitingRoomPanel extends JPanel {
 		chatMsg.UserName = userName;
 		chatMsg.roomName = roomName;
 		chatMsg.password = password;
-		chatMsg.peopleCount = 2; // 일단 2명으로 설정
+		chatMsg.peopleCount = peopleCount;
 		sendObject(chatMsg);
 	}
 	
@@ -200,10 +200,8 @@ public class WaitingRoomPanel extends JPanel {
 	// Server에게 network로 Object 전송
 	public void sendObject(Object obj) {
 		try {
-			oos.writeObject(obj);
 			if(obj instanceof ChatMsg) {
-				ChatMsg temp = (ChatMsg) obj;
-				System.out.println(temp.UserName + " " + temp.code + " " + temp.data + " 전송");
+				oos.writeObject(obj);
 			}
 		} catch (Exception e) {
 			System.out.println("sendObject error");
@@ -216,7 +214,6 @@ public class WaitingRoomPanel extends JPanel {
 			ChatMsg chatMsg = new ChatMsg(userName, "400", message);
 			chatMsg.roomId = gamePanel.roomId;
 			oos.writeObject(chatMsg);
-			System.out.println(userName + " 400 " + message + " 전송");
 		} catch (Exception e) {
 			System.out.println("sendChatMessage error");
 		}
@@ -239,7 +236,6 @@ public class WaitingRoomPanel extends JPanel {
 			chatMsg.roomId = gamePanel.roomId;
 			oos.writeObject(chatMsg);
 			omokPanel.setStatus(false);
-			System.out.println(userName + " 301 " + chatMsg.point + " 전송");
 		} catch (Exception e) {
 			System.out.println("sendMousePoint error");
 		}
@@ -271,8 +267,6 @@ public class WaitingRoomPanel extends JPanel {
 					
 					if(obj instanceof ChatMsg) {
 						chatMsg = (ChatMsg) obj;
-						msg = String.format("%s %s 받음", chatMsg.code, chatMsg.data);
-						System.out.println(msg);
 					} else {
 						continue;
 					}
@@ -310,7 +304,6 @@ public class WaitingRoomPanel extends JPanel {
 						
 						omokPanel = gamePanel.omokPanel;
 						chatPanel = gamePanel.chatPanel;
-						//omokPanel.setIsBlack(chatMsg.isBlack);
 						omokPanel.role = chatMsg.role;
 						
 						cardLayout.show(container, "gamePanel"); // GamePanel로 전환
@@ -345,7 +338,6 @@ public class WaitingRoomPanel extends JPanel {
 					// 접속자 이름이 띄어쓰기로 나누어진 하나의 문자열로 전송된다. 
 					case "211":
 						String str = chatMsg.data;
-						System.out.println("211 str = " + str);
 						StringTokenizer userSt = new StringTokenizer(str);
 						allUserModel.removeAllElements();
 						while(userSt.hasMoreTokens()) {
@@ -400,6 +392,14 @@ public class WaitingRoomPanel extends JPanel {
 					case "311":
 						// 전에 놓은 바둑돌 취소하기
 						omokPanel.remove(omokPanel.oldStone);
+						break;
+					// 기권
+					case "313":
+						int response4 = JOptionPane.showConfirmDialog(mainFrame, chatMsg.UserName + "님이 기권하셨습니다.\n 게임을 종료하시겠습니까?", "게임 승리", JOptionPane.YES_NO_OPTION);
+						if(response4 == JOptionPane.YES_OPTION)
+							System.exit(0);
+						else
+							cardLayout.show(container, "waitingRoomPanel");
 						break;
 					// 게임 승리
 					case "321":

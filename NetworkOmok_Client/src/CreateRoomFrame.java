@@ -13,7 +13,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerListModel;
+import javax.swing.SpinnerNumberModel;
 
 public class CreateRoomFrame extends JFrame{
 	private WaitingRoomPanel waitingRoomPanel;
@@ -22,6 +25,7 @@ public class CreateRoomFrame extends JFrame{
 	private JTextField inputRoomName;
 	private JCheckBox passwordCheckBox;
 	private JTextField inputPassword;
+	private JSpinner inputPeopleCount;
 	
 	public CreateRoomFrame(WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
@@ -35,22 +39,24 @@ public class CreateRoomFrame extends JFrame{
 		
 		font = new Font("AppleSDGothicNeoM00", Font.PLAIN, 15);
 		
+		// 방 이름
 		JLabel roomName = new JLabel("방 이름");
 		roomName.setFont(font);
-		roomName.setBounds(120, 30, 60, 30);
+		roomName.setBounds(120, 50, 60, 30);
 		container.add(roomName);
 		
 		inputRoomName = new JTextField();
-		inputRoomName.setBounds(240, 30, 150, 30);
+		inputRoomName.setBounds(240, 50, 150, 30);
 		container.add(inputRoomName);
 		
+		// 비밀번호
 		JLabel password = new JLabel("비밀번호");
 		password.setFont(font);
-		password.setBounds(120, 100, 60, 30);
+		password.setBounds(120, 120, 60, 30);
 		container.add(password);
 		
 		passwordCheckBox = new JCheckBox();
-		passwordCheckBox.setBounds(190, 100, 30, 30);
+		passwordCheckBox.setBounds(190, 120, 30, 30);
 		passwordCheckBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -63,10 +69,25 @@ public class CreateRoomFrame extends JFrame{
 		container.add(passwordCheckBox);
 		
 		inputPassword = new JTextField();
-		inputPassword.setBounds(240, 100, 150, 30);
+		inputPassword.setBounds(240, 120, 150, 30);
 		inputPassword.setEnabled(false);
 		container.add(inputPassword);
 		
+		// 인원 수
+		JLabel peopleCount = new JLabel("인원 수");
+		peopleCount.setFont(font);
+		peopleCount.setBounds(120, 190, 60, 30);
+		container.add(peopleCount);
+		
+		int[] arr = new int[20];
+		for(int i = 0; i <= 18; i++)
+			arr[i] = i + 2;
+		SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(2, 2, 20, 1);
+		inputPeopleCount = new JSpinner(spinnerNumberModel);
+		inputPeopleCount.setBounds(240, 190, 150, 30);
+		container.add(inputPeopleCount);
+		
+		// 방 만들기 버튼
 		JButton createBtn = new JButton("만들기");
 		createBtn.setFont(font);
 		createBtn.setBounds(220, 300, 80, 30);
@@ -94,7 +115,10 @@ public class CreateRoomFrame extends JFrame{
 				}
 			}
 			
-			waitingRoomPanel.createRoom(roomNameString, passwordString);
+			int count = (int) inputPeopleCount.getValue();
+			System.out.println("count = " + count);
+			
+			waitingRoomPanel.createRoom(roomNameString, passwordString, count);
 		}
 	}
 }

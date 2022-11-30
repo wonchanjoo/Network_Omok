@@ -172,7 +172,6 @@ public class OmokServer extends JFrame {
 		public String UserStatus;
 		public Vector<UserService> player = new Vector<>();
 		public long roomId;
-		public boolean isBlack = false;
 		public int role;
 
 		public UserService(Socket client_socket) {
@@ -391,7 +390,6 @@ public class OmokServer extends JFrame {
 						omokRoom.roomName = cm.roomName;
 						omokRoom.password = cm.password;
 						omokRoom.roomId = cm.roomId;
-						this.roomId = cm.roomId;
 						RoomVector.add(omokRoom);
 						
 						// 방 만들었다는 정보를 전체 유저에게 보내준다. 
@@ -400,22 +398,21 @@ public class OmokServer extends JFrame {
 							user.oos.writeObject(cm);
 						}
 						
-						// 임시로 처음 들어온 사람은 흑돌이라고 전송해준다
-						this.isBlack = true;
+						// 처음 들어온 사람은 흑돌이라고 전송해준다
 						ChatMsg obj = new ChatMsg("server", "201", "흑돌");
 						obj.role = obj.black; // 흑돌
-						obj.roomId = roomId;
+						obj.roomId = cm.roomId;
+						this.roomId = cm.roomId;
 						oos.writeObject(obj);
 					}
 					// 방 접속
 					else if(cm.code.matches("201")) { 
-						//OmokRoom currentRoom = null;
 						OmokRoom findRoom = null;
 						
 						for(int i=0; i<RoomVector.size(); i++) {
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
 							// task : 비밀번호 처리도 해야함
-							if(cm.roomId == omokRoom.roomId && omokRoom.player.size() <= 1) { // 클라이언트가 보낸 roomId를 비교해 해당 방을 찾는다
+							if(cm.roomId == omokRoom.roomId) { // 클라이언트가 보낸 roomId를 비교해 해당 방을 찾는다
 								findRoom = omokRoom; // 찾은 방 저장
 							}
 						} // for문 끝
@@ -435,7 +432,8 @@ public class OmokServer extends JFrame {
 						if(findRoom.player.size() == 0) {
 							ChatMsg obj = new ChatMsg(UserName, "201", "흑돌");
 							obj.role = obj.black;
-							obj.roomId = findRoom.roomId;
+							obj.roomId = cm.roomId;
+							this.roomId = cm.roomId;
 							WriteOneObject(obj);
 							findRoom.player.add(UserName); // player 리스트에 추가
 						}
@@ -443,7 +441,8 @@ public class OmokServer extends JFrame {
 						else if(findRoom.player.size() == 1) {
 							ChatMsg obj = new ChatMsg(UserName, "201", "백돌");
 							obj.role = obj.white;
-							obj.roomId = findRoom.roomId;
+							obj.roomId = cm.roomId;
+							this.roomId = cm.roomId;
 							WriteOneObject(obj);
 							findRoom.player.add(UserName); // player 리스트에 추가
 						}
@@ -451,12 +450,13 @@ public class OmokServer extends JFrame {
 						else if(findRoom.player.size() == 2) {
 							// (인원 수 - 플레이어 수) = 남은 인원 수가 현재 관전자 수보다 작으면 들어갈 수 없음
 							if((findRoom.peopleCount - 2) <= findRoom.viewer.size()) {
-								ChatMsg obj = new ChatMsg("SERVER", "202", "방 접속 실패");
+								ChatMsg obj = new ChatMsg("SERVER", "202", "방이 꽉 찼습니다!");
 								WriteOneObject(obj);
 								continue;
 							}
 							// 관전자로 접속 가능
 							else {
+								System.out.println("관전자");
 								findRoom.viewer.add(cm.UserName);
 								ChatMsg obj = new ChatMsg("SERVER", "201", "관전자");
 								obj.roomId = cm.roomId;
@@ -616,7 +616,7 @@ public class OmokServer extends JFrame {
 						AppendText(str);
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
-							if(user!=this && roomId == user.roomId) {
+							if(user!=this && cm.roomId == user.roomId) {
 								user.oos.writeObject(cm);
 							}
 						}
