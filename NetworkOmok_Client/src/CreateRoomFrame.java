@@ -116,7 +116,6 @@ public class CreateRoomFrame extends JFrame{
 			}
 			
 			int count = (int) inputPeopleCount.getValue();
-			System.out.println("count = " + count);
 			
 			waitingRoomPanel.createRoom(roomNameString, passwordString, count);
 		}

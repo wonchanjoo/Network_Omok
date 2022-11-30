@@ -170,7 +170,7 @@ public class OmokServer extends JFrame {
 		private Vector user_vc;
 		public String UserName = "";
 		public String UserStatus;
-		public Vector<UserService> player = new Vector<>();
+		//public Vector<UserService> player = new Vector<>();
 		public long roomId;
 		public int role;
 
@@ -239,6 +239,9 @@ public class OmokServer extends JFrame {
 				}
 			}
 			
+			ChatMsg obj = new ChatMsg("SERVER", "325", "GameOver");
+			obj.roomId = this.roomId;
+			WriteAllObject(obj);
 		}
 
 		// 모든 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
@@ -506,7 +509,7 @@ public class OmokServer extends JFrame {
 									user.oos.writeObject(obj);
 								}
 							}
-							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + this.player.size());
+							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + findRoom.player.size());
 						}
 					} // 201 방 접속 끝
 					// 210 방 목록 전송(처음 클라이언트가 접속할 때 방 목록 뿌려주기용)
@@ -679,9 +682,9 @@ public class OmokServer extends JFrame {
 							UserService user = (UserService) user_vc.elementAt(i);
 							if(cm.data.equals(user.UserName)) {
 								this.roomId = user.roomId;
-								this.player.add(this);
-								this.player.add(user);
-								user.player.add(this);
+//								this.player.add(this);
+//								this.player.add(user);
+//								user.player.add(this);
 							}
 						}
 					}

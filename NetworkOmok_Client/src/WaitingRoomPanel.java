@@ -313,14 +313,6 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 서버로부터 전체 방 목록 전송된 경우
 					case "210":
-						// 서버가 처음부터 방 목록 새로 보내주는 경우 다 지우고 다시 받아야 함
-						System.out.println("data = " + chatMsg.data);
-						if(chatMsg.data.equals("init")) {
-							System.out.println("삭제!!");
-							omokRooms.removeAllElements();
-							roomModel.removeAllElements();
-						}
-						
 						long roomId2 = chatMsg.roomId; // 방 ID
 						String roomName2 = chatMsg.roomName; // 방 이름
 						int peopleCount2 = chatMsg.peopleCount; // 방 인원 수
@@ -419,6 +411,21 @@ public class WaitingRoomPanel extends JPanel {
 							System.exit(0);
 						} else { // 대기실로 이동
 							cardLayout.show(container, "waitingRoomPanel");
+						}
+						break;
+					// 종료된 방
+					case "325":
+						System.out.println("종료된 방의 ID = " + chatMsg.roomId);
+						long gameOverRoomId = chatMsg.roomId;
+						for(int i=0; i<omokRooms.size(); i++) {
+							OmokRoom o = omokRooms.get(i);
+							if(o.roomId == gameOverRoomId) {
+								omokRooms.remove(i);
+								roomModel.remove(i);
+								roomList.setModel(roomModel);
+								roomList.repaint();
+								break;
+							}
 						}
 						break;
 					// 채팅 메시지
