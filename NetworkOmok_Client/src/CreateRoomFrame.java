@@ -41,17 +41,18 @@ public class CreateRoomFrame extends JFrame{
 		
 		// 방 이름
 		JLabel roomName = new JLabel("방 이름");
-		roomName.setFont(font);
+		roomName.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
 		roomName.setBounds(120, 50, 60, 30);
 		container.add(roomName);
 		
 		inputRoomName = new JTextField();
+		inputRoomName.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
 		inputRoomName.setBounds(240, 50, 150, 30);
 		container.add(inputRoomName);
 		
 		// 비밀번호
 		JLabel password = new JLabel("비밀번호");
-		password.setFont(font);
+		password.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
 		password.setBounds(120, 120, 60, 30);
 		container.add(password);
 		
@@ -75,7 +76,7 @@ public class CreateRoomFrame extends JFrame{
 		
 		// 인원 수
 		JLabel peopleCount = new JLabel("인원 수");
-		peopleCount.setFont(font);
+		peopleCount.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
 		peopleCount.setBounds(120, 190, 60, 30);
 		container.add(peopleCount);
 		
@@ -84,12 +85,13 @@ public class CreateRoomFrame extends JFrame{
 			arr[i] = i + 2;
 		SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(2, 2, 20, 1);
 		inputPeopleCount = new JSpinner(spinnerNumberModel);
+		inputPeopleCount.setFont(new Font("맑은 고딕", Font.PLAIN, 12));
 		inputPeopleCount.setBounds(240, 190, 150, 30);
 		container.add(inputPeopleCount);
 		
 		// 방 만들기 버튼
 		JButton createBtn = new JButton("만들기");
-		createBtn.setFont(font);
+		createBtn.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
 		createBtn.setBounds(220, 300, 80, 30);
 		createBtn.addActionListener(new CreaetBtnClick());
 		container.add(createBtn);

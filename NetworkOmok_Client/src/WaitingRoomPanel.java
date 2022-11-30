@@ -71,16 +71,16 @@ public class WaitingRoomPanel extends JPanel {
 		roomListLabel.setHorizontalAlignment(JLabel.CENTER);
 		roomListLabel.setOpaque(true);
 		roomListLabel.setBackground(backgroundColor);
-		roomListLabel.setBounds(130, 30, 200, 50);
+		roomListLabel.setBounds(150, 30, 200, 50);
 		this.add(roomListLabel);
 		
 		roomModel = new DefaultListModel<String>();
 		roomList = new JList<String>(roomModel);
 		roomList.setOpaque(true);
 		roomList.setBackground(backgroundColor);
-		roomList.setFont(new Font("맑은 고딕", Font.PLAIN, 22));
+		roomList.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 리스트가 하나만 선택될 수 있도록
-		roomList.setBounds(40, 105, 400, 470);
+		roomList.setBounds(80, 105, 350, 470);
 		roomList.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // 리스트 경계선 생성
 		roomList.setCellRenderer(new DefaultListCellRenderer() {
 			@Override
@@ -96,28 +96,30 @@ public class WaitingRoomPanel extends JPanel {
 		userListLabel.setHorizontalAlignment(JLabel.CENTER);
 		userListLabel.setOpaque(true);
 		userListLabel.setBackground(backgroundColor);
-		userListLabel.setBounds(600, 30, 200, 50);
+		userListLabel.setBounds(570, 30, 200, 50);
 		this.add(userListLabel);
 		
 		allUserModel = new DefaultListModel<String>();
 		allUserList = new JList<String>(allUserModel);
 		allUserList.setOpaque(true);
 		allUserList.setBackground(backgroundColor);
-		allUserList.setFont(new Font("맑은 고딕", Font.PLAIN, 22));
+		allUserList.setFont(new Font("맑은 고딕", Font.BOLD, 22));
 		allUserList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		allUserList.setBounds(535, 105, 320, 400);
+		allUserList.setBounds(520, 105, 300, 400);
 		allUserList.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		this.add(allUserList);
 		
 		// 방 만들기 버튼 생성
 		JButton createRoomBtn = new JButton("방 만들기");
-		createRoomBtn.setBounds(550, 520, 130, 50);
+		createRoomBtn.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+		createRoomBtn.setBounds(530, 520, 130, 50);
 		createRoomBtn.addActionListener(new CreateRoomBtnClick());
 		this.add(createRoomBtn);
 		
 		// 방 접속 버튼 생성
 		JButton enterRoomBtn = new JButton("방 접속");
-		enterRoomBtn.setBounds(710, 520, 130, 50);
+		enterRoomBtn.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+		enterRoomBtn.setBounds(685, 520, 130, 50);
 		this.add(enterRoomBtn);
 		
 		try {
@@ -301,9 +303,7 @@ public class WaitingRoomPanel extends JPanel {
 						gamePanel = new GamePanel(container, waitingRoomPanel); // GamePanel 생성
 						gamePanel.roomId = chatMsg.roomId; // GamePanel의 roomId 설정
 						container.add(gamePanel, "gamePanel");
-						
-						omokPanel = gamePanel.omokPanel;
-						chatPanel = gamePanel.chatPanel;
+
 						omokPanel.role = chatMsg.role;
 						
 						cardLayout.show(container, "gamePanel"); // GamePanel로 전환
@@ -437,7 +437,7 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 게임 방 전체 접속자
 					case "410":
-						chatPanel.roomUserModel.removeAllElements();
+						gamePanel.chatPanel.roomUserModel.removeAllElements();
 						String allUser = chatMsg.data;
 						StringTokenizer st2 = new StringTokenizer(allUser);
 						while(st2.hasMoreElements()) {

@@ -35,47 +35,47 @@ public class ChatPanel extends JPanel{
 		this.setBackground(Color.LIGHT_GRAY);
 		
 		// 접속자 리스트
-		roomUserModel = new DefaultListModel<>();
-		userList = new JList<String>(roomUserModel);
-		userList.setBounds(5, 5, 315, 230);
-		this.add(userList);
-		
-		// 채팅창
-		textArea = new JTextPane();
-		textArea.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
-		textArea.setBounds(5, 300, 315, 270);
-		this.add(textArea);
-		
-		textInput = new JTextField();
-		textInput.setBounds(5, 575, 250, 25);
-		this.add(textInput);
-		
-		sendBtn = new JButton("전송");
-		sendBtn.setBounds(257, 573, 65, 30);
-		this.add(sendBtn);
-		
-		ChatMessageSendAction chatMessageSendAction = new ChatMessageSendAction();
-		textInput.addActionListener(chatMessageSendAction);
-		sendBtn.addActionListener(chatMessageSendAction);
-		
-		// 버튼 3개
-		putBtn = new JButton("착수");
-		putBtn.setBounds(20, 250, 80, 40);
-		putBtn.setEnabled(false);
-		putBtn.addActionListener(new PutAction());
-		this.add(putBtn);
-		
-		returnBtn = new JButton("무르기");
-		returnBtn.setBounds(120, 250, 80, 40);
-		returnBtn.setEnabled(false);
-		returnBtn.addActionListener(new ReturnRequestAction());
-		this.add(returnBtn);
-		
-		abstentionBtn = new JButton("기권");
-		abstentionBtn.setBounds(220, 250, 80, 40);
-		abstentionBtn.setEnabled(false);
-		abstentionBtn.addActionListener(new AbstentionRequestAction());
-		this.add(abstentionBtn);
+			roomUserModel = new DefaultListModel<>();
+			userList = new JList<String>(roomUserModel);
+			userList.setBounds(5, 5, 315, 230);
+			this.add(userList);
+			
+			// 채팅창
+			textArea = new JTextPane();
+			textArea.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+			textArea.setBounds(5, 300, 315, 270);
+			this.add(textArea);
+			
+			textInput = new JTextField();
+			textInput.setBounds(5, 575, 250, 25);
+			this.add(textInput);
+				
+			sendBtn = new JButton("전송");
+			sendBtn.setBounds(257, 573, 65, 30);
+			this.add(sendBtn);
+			
+			ChatMessageSendAction chatMessageSendAction = new ChatMessageSendAction();
+			textInput.addActionListener(chatMessageSendAction);
+			sendBtn.addActionListener(chatMessageSendAction);
+			
+			// 버튼 3개
+			putBtn = new JButton("착수");
+			putBtn.setBounds(20, 250, 80, 40);
+			putBtn.setEnabled(false);
+			putBtn.addActionListener(new PutAction());
+			this.add(putBtn);
+			
+			returnBtn = new JButton("무르기");
+			returnBtn.setBounds(120, 250, 80, 40);
+			returnBtn.setEnabled(false);
+			returnBtn.addActionListener(new ReturnRequestAction());
+			this.add(returnBtn);
+			
+			abstentionBtn = new JButton("기권");
+			abstentionBtn.setBounds(220, 250, 80, 40);
+			abstentionBtn.setEnabled(false);
+			abstentionBtn.addActionListener(new AbstentionRequestAction());
+			this.add(abstentionBtn);
 	}
 	
 	// 채팅창 좌측에 메시지 출력

@@ -30,7 +30,7 @@ public class StartPanel extends JPanel {
 	private Font font;
 	
 	public StartPanel(Container container, JFrame mainFrame) {
-		this.setSize(1000, 600);
+		this.setSize(800, 650);
 		this.mainFrame = mainFrame;
 		this.container = container;
 		this.cardLayout = (CardLayout) container.getLayout();

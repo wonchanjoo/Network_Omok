@@ -208,7 +208,7 @@ public class OmokServer extends JFrame {
 				return 110 + 27 * (value + 1);
 		}
 		
-		public void Login() {
+		public void Login() throws IOException {
 			AppendText("새로운 참가자 " + UserName + " 입장.");
 			String data = "";
 			for (int i = 0; i < user_vc.size(); i++) {
@@ -219,6 +219,8 @@ public class OmokServer extends JFrame {
 		}
 
 		public void Logout() {
+			long logoutUserRoomId = this.roomId;
+			
 			UserVec.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
 			String data = "";
 			for (int i = 0; i < user_vc.size(); i++) {
@@ -255,8 +257,7 @@ public class OmokServer extends JFrame {
 		public void WriteAllObject(Object ob) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				if (user.UserStatus == "O")
-					user.WriteOneObject(ob);
+				user.WriteOneObject(ob);
 			}
 		}
 
@@ -662,8 +663,12 @@ public class OmokServer extends JFrame {
 						for(int j=0; j<findRoom.viewer.size(); j++) {
 							data += findRoom.viewer.elementAt(j) + " ";
 						}
-						System.out.println(data);
-						WriteAll("410", data); // 방에 접속한 플레이어 이름 전송
+						
+						for(int i=0; i<user_vc.size(); i++) {
+							UserService u = (OmokServer.UserService) user_vc.get(i);
+							if(u.roomId == cm.roomId)
+								u.WriteOne("410", data);
+						}
 					}
 					else if (cm.code.matches("500")) { //게임 초대
 						String str = "[" + cm.UserName + "]님이 [" + cm.data + "]님을 초대하셨습니다.";
