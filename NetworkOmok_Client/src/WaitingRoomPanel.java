@@ -314,6 +314,7 @@ public class WaitingRoomPanel extends JPanel {
 					// 서버로부터 전체 방 목록 전송된 경우
 					case "210":
 						// 서버가 처음부터 방 목록 새로 보내주는 경우 다 지우고 다시 받아야 함
+						System.out.println("data = " + chatMsg.data);
 						if(chatMsg.data.equals("init")) {
 							System.out.println("삭제!!");
 							omokRooms.removeAllElements();

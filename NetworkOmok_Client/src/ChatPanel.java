@@ -149,7 +149,6 @@ public class ChatPanel extends JPanel{
 			int response = JOptionPane.showConfirmDialog(waitingRoomPanel.mainFrame, "기권 하시겠습니까?","기권", JOptionPane.YES_NO_OPTION);
 			if (response == JOptionPane.YES_OPTION) { // 기권
 				ChatMsg chatMsg = new ChatMsg(waitingRoomPanel.userName, "320", "abstention");
-				System.out.println("기권 roomId = " + waitingRoomPanel.roomId);
 				chatMsg.roomId = waitingRoomPanel.roomId;
 				waitingRoomPanel.sendObject(chatMsg);
 			} else { // 기권 취소

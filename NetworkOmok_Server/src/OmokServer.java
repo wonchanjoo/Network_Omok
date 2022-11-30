@@ -230,22 +230,15 @@ public class OmokServer extends JFrame {
 		}
 		
 		public void GameOver() throws IOException {
+			// 게임 끝난 방 지우기
 			for(int i=0; i<RoomVector.size(); i++) {
 				OmokRoom o = RoomVector.get(i);
 				if(o.roomId == this.roomId) {
-					RoomVector.remove(i);
+					RoomVector.removeElementAt(i);
 					break;
 				}
 			}
 			
-			ChatMsg obj = new ChatMsg("SERVER", "210", "init");
-			for(int i=0; i<RoomVector.size(); i++) {
-				OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
-				obj.roomId = omokRoom.roomId;
-				obj.roomName = omokRoom.roomName;
-				obj.peopleCount = omokRoom.peopleCount;
-				WriteAllObject(obj);
-			}
 		}
 
 		// 모든 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
