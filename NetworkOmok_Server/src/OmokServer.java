@@ -467,14 +467,16 @@ public class OmokServer extends JFrame {
 					} // 201 방 접속 끝
 					// 210 방 목록 전송(처음 클라이언트가 접속할 때 방 목록 뿌려주기용)
 					else if (cm.code.matches("210")) { 
-						ChatMsg obj = new ChatMsg("server", "210", "방 목록");
 						System.out.println("room 갯수 : " + RoomVector.size());
 						for(int i=0; i<RoomVector.size(); i++) {
+							ChatMsg obj = new ChatMsg("server", "210", "방 목록");
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
 							obj.roomId = omokRoom.roomId;
 							obj.password = omokRoom.password;
 							obj.roomName = omokRoom.roomName;
 							obj.peopleCount = omokRoom.peopleCount;
+							System.out.println(i+1 + " : " + obj.roomId);
+							System.out.println(i+1 + " : " + obj.roomName);
 							oos.writeObject(obj);
 						}
 					}
@@ -495,6 +497,7 @@ public class OmokServer extends JFrame {
 						} // for문 끝
 						
 						validOmok = findRoom.omokGame(cm.point, this.role);
+						System.out.println("role : " + this.role);
 						
 						//findRoom.data에 착수 거부 이유를 가지고 있음
 						if(validOmok == false) {
