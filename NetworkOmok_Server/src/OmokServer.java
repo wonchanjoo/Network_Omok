@@ -658,13 +658,17 @@ public class OmokServer extends JFrame {
 								break;
 							}
 						}
+						
+						// player
 						for(int j=0; j<findRoom.player.size(); j++) {
 							data += findRoom.player.elementAt(j) + " ";
 						}
+						// viewer
+						for(int j=0; j<findRoom.viewer.size(); j++) {
+							data += findRoom.viewer.elementAt(j) + " ";
+						}
 						System.out.println(data);
 						WriteAll("410", data); // 방에 접속한 플레이어 이름 전송
-						
-						//viewer 이름도 전송해 줘야함.
 					}
 					else if (cm.code.matches("500")) { //게임 초대
 						String str = "[" + cm.UserName + "]님이 [" + cm.data + "]님을 초대하셨습니다.";
