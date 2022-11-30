@@ -150,6 +150,7 @@ public class WaitingRoomPanel extends JPanel {
 				OmokRoom selectedRoom = omokRooms.get(selectedIndex);
 				ChatMsg chatMsg = new ChatMsg(userName, "201", "방 접속");
 				chatMsg.roomId = selectedRoom.roomId; // roomId
+				System.out.println("selected roomId = " + selectedRoom.roomId);
 				sendObject(chatMsg); // roomId와 함께 방 접속 메시지 전송 
 			}
 		});

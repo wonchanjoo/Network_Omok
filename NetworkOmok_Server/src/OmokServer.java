@@ -612,7 +612,7 @@ public class OmokServer extends JFrame {
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
 							if(cm.roomId == user.roomId) {
-								user.oos.writeObject(cm);
+								user.WriteOneObject(cm);
 							}
 						}
 						GameOver();
