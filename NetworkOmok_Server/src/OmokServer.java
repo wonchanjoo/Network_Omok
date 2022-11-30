@@ -238,14 +238,13 @@ public class OmokServer extends JFrame {
 				}
 			}
 			
-			ChatMsg obj = new ChatMsg("server", "210", "init");
+			ChatMsg obj = new ChatMsg("SERVER", "210", "init");
 			for(int i=0; i<RoomVector.size(); i++) {
 				OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
 				obj.roomId = omokRoom.roomId;
-				obj.password = omokRoom.password;
 				obj.roomName = omokRoom.roomName;
 				obj.peopleCount = omokRoom.peopleCount;
-				oos.writeObject(obj);
+				WriteAllObject(obj);
 			}
 		}
 
@@ -611,16 +610,16 @@ public class OmokServer extends JFrame {
 							}
 						}
 					}
-					else if (cm.code.matches("313")) { //항복
+					else if (cm.code.matches("320")) { //항복
 						String str = "[" + cm.UserName + "]님이 항복하셨습니다.";
 						AppendText(str);
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
-							if(user!=this && cm.roomId == user.roomId) {
+							if(cm.roomId == user.roomId) {
 								user.oos.writeObject(cm);
 							}
 						}
-						//게임 종료! 이긴 사람에게는 321, 진 사람에게는 322 프로토콜 전달, 관전자에게는 323
+						GameOver();
 					}
 					else if (cm.code.matches("324")) { //제한 시간 종료
 						String str = "[" + cm.UserName + "]님의 제한 시간이 종료되었습니다.";

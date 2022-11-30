@@ -38,7 +38,7 @@ public class WaitingRoomPanel extends JPanel {
 	public String userName;
 	private OmokPanel omokPanel;
 	private ChatPanel chatPanel;
-	private JFrame mainFrame;
+	public JFrame mainFrame;
 	private WaitingRoomPanel waitingRoomPanel;
 	private Container container;
 	private CardLayout cardLayout;
@@ -289,8 +289,7 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 게임 방에 접속
 					case "201":
-						roomId = chatMsg.roomId;
-						System.out.println("201 room Id = " + roomId);
+						waitingRoomPanel.roomId = chatMsg.roomId;
 						
 						for(int i=0; i<omokRooms.size(); i++) {
 							OmokRoom o = omokRooms.get(i);
@@ -316,6 +315,7 @@ public class WaitingRoomPanel extends JPanel {
 					case "210":
 						// 서버가 처음부터 방 목록 새로 보내주는 경우 다 지우고 다시 받아야 함
 						if(chatMsg.data.equals("init")) {
+							System.out.println("삭제!!");
 							omokRooms.removeAllElements();
 							roomModel.removeAllElements();
 						}
@@ -332,7 +332,8 @@ public class WaitingRoomPanel extends JPanel {
 						String roomStr2 = String.format("%10s   %d/%d", chatMsg.roomName, 1, chatMsg.peopleCount);
 						roomModel.addElement(roomStr2); // 리스트 모델에 추가
 						
-						repaint();
+						roomList.setModel(roomModel);
+						roomList.repaint();
 						break;
 					// 서버로부터 전체 접속자 목록 전송된 경우
 					// 접속자 이름이 띄어쓰기로 나누어진 하나의 문자열로 전송된다. 
@@ -394,7 +395,7 @@ public class WaitingRoomPanel extends JPanel {
 						omokPanel.remove(omokPanel.oldStone);
 						break;
 					// 기권
-					case "313":
+					case "320":
 						int response4 = JOptionPane.showConfirmDialog(mainFrame, chatMsg.UserName + "님이 기권하셨습니다.\n 게임을 종료하시겠습니까?", "게임 승리", JOptionPane.YES_NO_OPTION);
 						if(response4 == JOptionPane.YES_OPTION)
 							System.exit(0);
