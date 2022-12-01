@@ -524,8 +524,7 @@ public class OmokServer extends JFrame {
 						}
 					} // 201 방 접속 끝
 					// 210 방 목록 전송(처음 클라이언트가 접속할 때 방 목록 뿌려주기용)
-					else if (cm.code.matches("210")) { 
-						System.out.println("room 갯수 : " + RoomVector.size());
+					else if (cm.code.matches("210")) {
 						for(int i=0; i<RoomVector.size(); i++) {
 							ChatMsg obj = new ChatMsg("server", "210", "방 목록");
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
@@ -557,7 +556,6 @@ public class OmokServer extends JFrame {
 						} // for문 끝
 						
 						validOmok = findRoom.omokGame(cm.point, this.role);
-						System.out.println("role : " + this.role);
 						
 						//findRoom.data에 착수 거부 이유를 가지고 있음
 						if(validOmok == false) {
@@ -566,13 +564,9 @@ public class OmokServer extends JFrame {
 							continue;
 						}
 						
-						//승자 판별...
-						if(role == black) {
-							winner = findRoom.CheckOmok(1);
-						}
-						else if(role == white){
-							winner = findRoom.CheckOmok(2);
-						}
+						//Console 창에 오목 배열 띄우기
+						//System.out.println("role(0: 흑돌, 1: 흰돌) : " + this.role);
+						//findRoom.DisplayOmok();
 						
 						//좌표를 모든 참가자에게 뿌려준다.
 						ChatMsg msg1 = new ChatMsg(cm.UserName, "301", "좌표");
@@ -584,6 +578,14 @@ public class OmokServer extends JFrame {
 							if(cm.roomId == user.roomId) {
 								user.oos.writeObject(msg1);
 							}
+						}
+						
+						//승자 판별...
+						if(role == black) {
+							winner = findRoom.CheckOmok(1);
+						}
+						else if(role == white){
+							winner = findRoom.CheckOmok(2);
 						}
 						
 						if(winner) {

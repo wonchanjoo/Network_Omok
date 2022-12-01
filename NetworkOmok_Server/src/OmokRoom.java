@@ -33,19 +33,26 @@ public class OmokRoom {
 		}
 	}
 	
-	//오목 승자 판별
+	public void DisplayOmok() {
+		System.out.println("[" + this.roomName + "]" + "방의 현재 오목 배열");
+		System.out.println("-------------------------------------");
+		for(int i=0; i<19; i++) {
+			for(int j=0; j<19; j++) {
+				System.out.print(board[j][i]);
+			}
+			System.out.println();
+		}
+		System.out.println("-------------------------------------");
+	}
+	
+	//오목 승자 판별, bug 고쳐야함
 	public boolean CheckOmok(int blwh) {
-		//고쳐야함
-		
 		for(int i=0; i<19; i++) {
 			for(int j=0; j<19; j++) {
 				if(board[j][i]==blwh && board[j][i+1]==blwh && board[j][i+2]==blwh && board[j][i+3]==blwh && board[j][i+4]==blwh) return true;
 				else if(board[j][i]==blwh && board[j+1][i]==blwh && board[j+2][i]==blwh && board[j+3][i]==blwh && board[j+4][i]==blwh) return true;
 				else if(board[j][i]==blwh && board[j+1][i+1]==blwh && board[j+2][i+2]==blwh && board[j+3][i+3]==blwh && board[j+4][i+4]==blwh) return true;
-				else if(board[j][i]==blwh && board[j+1][i-1]==blwh && board[j+2][i-2]==blwh && board[j+3][i-3]==blwh && board[j+4][i-4]==blwh) {
-					System.out.println("대각선");
-					return true;
-				}
+				else if(board[j][i]==blwh && board[j+1][i-1]==blwh && board[j+2][i-2]==blwh && board[j+3][i-3]==blwh && board[j+4][i-4]==blwh) return true;
 			}
 		}
 		return false;
@@ -67,7 +74,6 @@ public class OmokRoom {
 		
 		if(samsam) {
 			data = "삼삼입니다";
-			System.out.println(data);
 			return false;
 		}
 		
@@ -82,16 +88,6 @@ public class OmokRoom {
 			board[currentBoardX][currentBoardY] = 2;
 			//winner = CheckOmok(2);
 		}
-		
-		for(int i=0; i<19; i++) {
-			for(int j=0; j<19; j++) {
-				System.out.print(board[j][i]);
-			}
-			System.out.println();
-		}
-		
-		System.out.println("[System] board[10][9] : " + board[10][9]);
-		
 		return true;
 	}
 	
@@ -100,7 +96,7 @@ public class OmokRoom {
 		count += find1(boardX, boardY);
 		count += find2(boardX, boardY);
 		count += find3(boardX, boardY);
-		count += find3(boardX, boardY);
+		count += find4(boardX, boardY);
 		if(count >= 2) return true;
 		else return false;
 	}
@@ -115,10 +111,8 @@ public class OmokRoom {
 		int xx = boardX - 1;
 		boolean check = false;
 		//왼쪽방향 탐색
-		System.out.println("찍습니다.");
 		for(int i = xx; i > 0; i--) {
 			//흰돌을 만나면 탐색 중지
-			System.out.print("[" + i + "] : " + board[boardY][i] + " ");
 			if(board[i][boardY] == 2) break;
 			//흑돌이면
 			if(board[i][boardY] == 1) {
@@ -329,7 +323,6 @@ public class OmokRoom {
 			xx++;
 			yy++;
 		}
-		
 		
 		allStone = stone1 + stone2;
 		if(allStone != 2) return 0;
