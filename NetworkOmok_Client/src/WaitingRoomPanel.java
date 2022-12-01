@@ -74,20 +74,23 @@ public class WaitingRoomPanel extends JPanel {
 		roomListLabel.setBounds(150, 30, 200, 50);
 		this.add(roomListLabel);
 		
+		JLabel roomListLabel2 = new JLabel("방 이름          인원         방 상태");
+		roomListLabel2.setHorizontalAlignment(JLabel.LEFT);
+		roomListLabel2.setFont(new Font("맑은 고딕", Font.PLAIN, 22));
+		roomListLabel2.setOpaque(true);
+		roomListLabel2.setBackground(new Color(202, 164, 100));
+		roomListLabel2.setBounds(80, 105, 350, 50);
+		roomListLabel2.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		this.add(roomListLabel2);
+		
 		roomModel = new DefaultListModel<String>();
 		roomList = new JList<String>(roomModel);
 		roomList.setOpaque(true);
 		roomList.setBackground(backgroundColor);
-		roomList.setFont(new Font("맑은 고딕", Font.BOLD, 22));
+		roomList.setFont(new Font("맑은 고딕", Font.PLAIN, 22));
 		roomList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // 리스트가 하나만 선택될 수 있도록
-		roomList.setBounds(80, 105, 350, 470);
+		roomList.setBounds(80, 155, 350, 420);
 		roomList.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // 리스트 경계선 생성
-		roomList.setCellRenderer(new DefaultListCellRenderer() {
-			@Override
-			public int getHorizontalAlignment() {
-				return CENTER;
-			}
-		});
 		this.add(roomList);
 		
 		// 접속자 리스트 생성
@@ -111,15 +114,19 @@ public class WaitingRoomPanel extends JPanel {
 		
 		// 방 만들기 버튼 생성
 		JButton createRoomBtn = new JButton("방 만들기");
-		createRoomBtn.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+		createRoomBtn.setBackground(new Color(202, 164, 100));
+		createRoomBtn.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		createRoomBtn.setBounds(530, 520, 130, 50);
+		createRoomBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		createRoomBtn.addActionListener(new CreateRoomBtnClick());
 		this.add(createRoomBtn);
 		
 		// 방 접속 버튼 생성
 		JButton enterRoomBtn = new JButton("방 접속");
-		enterRoomBtn.setFont(new Font("맑은 고딕", Font.PLAIN, 16));
+		enterRoomBtn.setBackground(new Color(202, 164, 100));
+		enterRoomBtn.setFont(new Font("맑은 고딕", Font.BOLD, 16));
 		enterRoomBtn.setBounds(685, 520, 130, 50);
+		enterRoomBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		this.add(enterRoomBtn);
 		
 		try {
@@ -244,6 +251,17 @@ public class WaitingRoomPanel extends JPanel {
 		}
 	}
 	
+	public void updateRoomList() {
+		for(int i=0; i<omokRooms.size(); i++) {
+			OmokRoom o = omokRooms.get(i);
+			String s = "";
+			if(o.status == 0) s = "게임 대기 중";
+			else s = "게임 하는 중";
+			String str = String.format("%-16s%-5d%9s", o.roomName, o.peopleCount, s);
+			roomModel.set(i, str);
+		}
+	}
+	
 	class ListenNetwork extends Thread {
 		public ListenNetwork() {
 			// 방 목록 달라는 메시지 전송
@@ -287,7 +305,7 @@ public class WaitingRoomPanel extends JPanel {
 						newRoom.peopleCount = peopleCount;
 						omokRooms.add(newRoom); // 방 리스트에 추가
 						
-						String roomStr = String.format("%10s   %d/%d", chatMsg.roomName, 1, chatMsg.peopleCount);
+						String roomStr = String.format("%-16s%-5d%9s", chatMsg.roomName, chatMsg.peopleCount, "게임 대기 중");
 						roomModel.addElement(roomStr); // 리스트 모델에 추가
 						break;
 					// 게임 방에 접속
@@ -306,6 +324,23 @@ public class WaitingRoomPanel extends JPanel {
 
 						omokPanel.role = chatMsg.role;
 						
+						// 흑돌이 접속하는 경우 data에서 plqyer1의 이름을 가져와 화면에 표시
+						if(chatMsg.role == chatMsg.black) {
+							gamePanel.omokPanel.blackPlayerName.setText(chatMsg.data);
+						}
+						// 백돌이 접속하는 경우 data에서 player의 이름을 가져와 화면에 표시
+						if(chatMsg.role == chatMsg.white) {
+							StringTokenizer whiteSt = new StringTokenizer(chatMsg.data);
+							gamePanel.omokPanel.blackPlayerName.setText(whiteSt.nextToken());
+							gamePanel.omokPanel.whitePlayerName.setText(whiteSt.nextToken());
+						}
+						// 관전자가 접속하는 경우 data에서 player의 이름을 가져와 화면에 표시
+						if(chatMsg.role == chatMsg.watch) {
+							StringTokenizer viewerSt = new StringTokenizer(chatMsg.data);
+							gamePanel.omokPanel.blackPlayerName.setText(viewerSt.nextToken());
+							gamePanel.omokPanel.whitePlayerName.setText(viewerSt.nextToken());
+						}
+						
 						cardLayout.show(container, "gamePanel"); // GamePanel로 전환
 						
 						gamePanel.roomUserList();
@@ -323,9 +358,13 @@ public class WaitingRoomPanel extends JPanel {
 						OmokRoom newRoom2 = new OmokRoom(roomId2); // 새로운 방 만들기
 						newRoom2.roomName = roomName2;
 						newRoom2.peopleCount = peopleCount2;
+						newRoom2.status = chatMsg.roomStatus;
 						omokRooms.add(newRoom2); // 방 리스트에 추가
 						
-						String roomStr2 = String.format("%10s   %d/%d", chatMsg.roomName, 1, chatMsg.peopleCount);
+						String s = "";
+						if(newRoom2.status == 0) s = "게임 대기 중";
+						else s = "게임 하는 중";
+						String roomStr2 = String.format("%-16s%-5d%9s", chatMsg.roomName, chatMsg.peopleCount, s);
 						roomModel.addElement(roomStr2); // 리스트 모델에 추가
 						
 						roomList.setModel(roomModel);
@@ -344,26 +383,37 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 게임 시작
 					case "300":
-						// 흑돌 백돌 이름 가져와서 화면에 표시
-						String userNames = chatMsg.data;
-						StringTokenizer st = new StringTokenizer(userNames);
-						omokPanel.blackPlayerName.setText(st.nextToken());
-						omokPanel.whitePlayerName.setText(st.nextToken());
+						// 자신이 플레이어인 경우
+						if(gamePanel != null && chatMsg.roomId == gamePanel.roomId) {
+							// 흑돌 백돌 이름 가져와서 화면에 표시
+							String userNames = chatMsg.data;
+							StringTokenizer st = new StringTokenizer(userNames);
+							omokPanel.blackPlayerName.setText(st.nextToken());
+							omokPanel.whitePlayerName.setText(st.nextToken());
 						
-						if(omokPanel.role == omokPanel.black) { // 흑돌인 경우
-							omokPanel.setStatus(true); // status를 true로 설정해 바둑돌을 놓을 수 있는 상태로 변경한다.
-							chatPanel.putBtn.setEnabled(true); // 착수 버튼 활성화
+							if(omokPanel.role == omokPanel.black) { // 흑돌인 경우
+								omokPanel.setStatus(true); // status를 true로 설정해 바둑돌을 놓을 수 있는 상태로 변경한다.
+								chatPanel.putBtn.setEnabled(true); // 착수 버튼 활성화
+							}
+						
+							chatPanel.returnBtn.setEnabled(true);
+							chatPanel.abstentionBtn.setEnabled(true);
 						}
-						
-						chatPanel.returnBtn.setEnabled(true);
-						chatPanel.abstentionBtn.setEnabled(true);
+						// 플레이어가 아니면 방 리스트 상태 업데이트만 해주면 됨
+						else {
+							for(int i=0; i<omokRooms.size(); i++) {
+								if(omokRooms.get(i).roomId == chatMsg.roomId)
+									omokRooms.get(i).status = 1;
+							}
+							updateRoomList();
+						}
 						break;
 					// 서버로부터 계산된 마우스 이벤트
 					case "301":
 						omokPanel.putStone(chatMsg.point.x, chatMsg.point.y, chatMsg.role);
 						if(chatMsg.role == omokPanel.role) // 내가 보낸 좌표면
 							omokPanel.setStatus(false); // 내 차례가 아니므로 false
-						else { // 상대방이 보낸 좌표면
+						else if(chatMsg.role != omokPanel.role && omokPanel.role != chatMsg.watch){ // 상대방이 보낸 좌표면
 							omokPanel.setStatus(true); // 내 차례므로 true
 							chatPanel.putBtn.setEnabled(true); // 착수 버튼 활성화
 						}
