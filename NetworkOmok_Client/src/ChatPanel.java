@@ -140,8 +140,7 @@ public class ChatPanel extends JPanel{
 	class ReturnRequestAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ChatMsg chatMsg = new ChatMsg(waitingRoomPanel.userName, "310", "return");
-			waitingRoomPanel.sendObject(chatMsg); // 무르기 메시지 전송
+			waitingRoomPanel.returnRequest();
 		}
 	}
 	

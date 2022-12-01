@@ -241,7 +241,10 @@ public class WaitingRoomPanel extends JPanel {
 		// OmokPanel의 멤버 변수에서 좌표를 읽어와 전송해야 된다. 
 		try {
 			ChatMsg chatMsg = new ChatMsg(userName, "301", "point");
-			chatMsg.point = new Point(omokPanel.oldStone.getX(), omokPanel.oldStone.getY());
+			if(omokPanel.role == omokPanel.black)
+				chatMsg.point = new Point(omokPanel.oldBlackStone.getX(), omokPanel.oldBlackStone.getY());
+			else if(omokPanel.role == omokPanel.white)
+				chatMsg.point = new Point(omokPanel.oldWhiteStone.getX(), omokPanel.oldWhiteStone.getY());
 			chatMsg.role = omokPanel.role;
 			chatMsg.roomId = gamePanel.roomId;
 			oos.writeObject(chatMsg);
@@ -260,6 +263,22 @@ public class WaitingRoomPanel extends JPanel {
 			String str = String.format("%-16s%-5d%-9s", o.roomName, o.peopleCount, s);
 			roomModel.set(i, str);
 		}
+	}
+	
+	// 무르기 버튼을 클릭했을 때 실행되는 메소드
+	public void returnRequest() {
+		// 내 차례인 경우 무르기 요청을 보낼 수 없음
+		if(omokPanel.status) {
+			JOptionPane.showMessageDialog(mainFrame, "상대방의 차례일때만 무르기를 요청할 수 있습니다.", "무르기", JOptionPane.ERROR_MESSAGE);
+		}
+		// 내 차례가 아니면 무르기 요청 전송
+		else {
+			ChatMsg chatMsg = new ChatMsg(userName, "310", "무르기 요청");
+			chatMsg.roomId = waitingRoomPanel.roomId;
+			chatMsg.role = omokPanel.role;
+			sendObject(chatMsg);
+		}
+			
 	}
 	
 	class ListenNetwork extends Thread {
@@ -428,21 +447,35 @@ public class WaitingRoomPanel extends JPanel {
 					case "310":
 						int response = JOptionPane.showConfirmDialog(mainFrame, "무르기를 허용하시겠습니까?", "무르기", JOptionPane.YES_NO_OPTION);
 						if (response == JOptionPane.YES_OPTION) { // 무르기 허용
-							chatMsg = new ChatMsg(userName, "303", "YES");
+							chatMsg = new ChatMsg(userName, "311", "YES");
+							chatMsg.roomId = waitingRoomPanel.roomId;
+							chatMsg.role = omokPanel.role;
 							sendObject(chatMsg);
 						} else { // 무르기 거절
-							chatMsg = new ChatMsg(userName, "304", "NO");
+							chatMsg = new ChatMsg(userName, "312", "NO");
+							chatMsg.roomId = waitingRoomPanel.roomId;
+							chatMsg.role = omokPanel.role;
 							sendObject(chatMsg);
 						}
 						break;
 					// 무르기 허용
 					case "311":
-						// 전에 놓은 바둑돌 취소하기
-						omokPanel.remove(omokPanel.oldStone);
+						if(chatMsg.UserName.equals(userName))
+							JOptionPane.showMessageDialog(mainFrame, "상대방이 무르기를 허용 했습니다.", "무르기", JOptionPane.PLAIN_MESSAGE);
+						
+						if(chatMsg.role == chatMsg.black)
+							omokPanel.remove(omokPanel.oldBlackStone);
+						else if(chatMsg.role == chatMsg.white)
+							omokPanel.remove(omokPanel.oldWhiteStone);
+						omokPanel.repaint();
+						break;
+					// 무르기 거절
+					case "312":
+						JOptionPane.showMessageDialog(mainFrame, "상대방이 무르기를 거절 했습니다.", "무르기", JOptionPane.ERROR_MESSAGE);
 						break;
 					// 기권
 					case "320":
-						int response4 = JOptionPane.showConfirmDialog(mainFrame, chatMsg.UserName + "님이 기권하셨습니다.\n 게임을 종료하시겠습니까?", "게임 승리", JOptionPane.YES_NO_OPTION);
+						int response4 = JOptionPane.showConfirmDialog(mainFrame, chatMsg.UserName + "님이 기권하셨습니다.\n 게임을 종료하시겠습니까?", "게임 기권", JOptionPane.YES_NO_OPTION);
 						if(response4 == JOptionPane.YES_OPTION)
 							System.exit(0);
 						else

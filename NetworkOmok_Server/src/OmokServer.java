@@ -604,10 +604,31 @@ public class OmokServer extends JFrame {
 					else if (cm.code.matches("310")) { //무르기 요청
 						String str = "[" + cm.UserName + "]님이 무르기를 요청하셨습니다.";
 						AppendText(str);
+						// 관전자를 제외하고, 플레이어 한명에게만 전송해야함
+						String name = "";
+						OmokRoom r = null;
+						
+						// 무르기 요청한 방 찾기
+						for(int i = 0; i < RoomVector.size(); i++) {
+							OmokRoom o = RoomVector.get(i);
+							if(o.roomId == cm.roomId) {
+								r = o;
+								break;
+							}
+						}
+						
+						// 무르기 요청한 사람의 상대방 찾기
+						if(r.player.get(0).equals(cm.UserName))
+							name = r.player.get(1);
+						else
+							name = r.player.get(0);
+						
+						// 상대방 UserService 찾아서 그대로 전송
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
-							if(user!=this && roomId == user.roomId) {
+							if(user!=this && roomId == user.roomId && user.UserName.equals(name)) {
 								user.oos.writeObject(cm);
+								break;
 							}
 						}
 					}
@@ -616,7 +637,7 @@ public class OmokServer extends JFrame {
 						AppendText(str);
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
-							if(user!=this && roomId == user.roomId) {
+							if(roomId == user.roomId) {
 								user.oos.writeObject(cm);
 							}
 						}
@@ -624,10 +645,31 @@ public class OmokServer extends JFrame {
 					else if (cm.code.matches("312")) { //무르기 거절
 						String str = "[" + cm.UserName + "]님이 무르기를 거절하셨습니다.";
 						AppendText(str);
+						// 관전자를 제외하고, 플레이어 한명에게만 전송해야함
+						String name = "";
+						OmokRoom r = null;
+						
+						// 무르기 요청한 방 찾기
+						for(int i = 0; i < RoomVector.size(); i++) {
+							OmokRoom o = RoomVector.get(i);
+							if(o.roomId == cm.roomId) {
+								r = o;
+								break;
+							}
+						}
+						
+						// 무르기 요청한 사람의 상대방 찾기
+						if(r.player.get(0).equals(cm.UserName))
+							name = r.player.get(1);
+						else
+							name = r.player.get(0);
+						
+						// 상대방 UserService 찾아서 그대로 전송
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
-							if(user!=this && roomId == user.roomId) {
+							if(user!=this && roomId == user.roomId && user.UserName.equals(name)) {
 								user.oos.writeObject(cm);
+								break;
 							}
 						}
 					}

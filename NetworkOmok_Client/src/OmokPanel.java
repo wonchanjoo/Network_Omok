@@ -28,8 +28,9 @@ public class OmokPanel extends JPanel {
 	public JLabel whitePlayerName;
 	
 	public int role;
-	private boolean status = false;
-	public JLabel oldStone;
+	public boolean status = false;
+	public JLabel oldBlackStone;
+	public JLabel oldWhiteStone;
 	
 	private ImageIcon icon;
 	private Image img;
@@ -120,11 +121,13 @@ public class OmokPanel extends JPanel {
 		if(role == black) {
 			JLabel blackStone = new JLabel(new ImageIcon(resizeBlackImg));
 			blackStone.setBounds(x, y, 27, 27);
+			oldBlackStone = blackStone;
 			OmokPanel.this.add(blackStone);
 		}
 		else {
 			JLabel whiteStone = new JLabel(new ImageIcon(resizeWhiteImg));
 			whiteStone.setBounds(x, y, 27, 27);
+			oldWhiteStone = whiteStone;
 			OmokPanel.this.add(whiteStone);
 		}
 		OmokPanel.this.repaint();
@@ -152,12 +155,12 @@ public class OmokPanel extends JPanel {
 			
 			if(role == black) { // 자신이 흑돌인 경우
 				bStone.setLocation(x - 13, y - 13);
-				oldStone = bStone; // 현재 바둑돌 저장
+				oldBlackStone = bStone; // 현재 바둑돌 저장
 				OmokPanel.this.add(bStone);
 			}
 			else if(role == white) { // 자신이 백돌인 경우
 				wStone.setLocation(x - 13, y - 13);
-				oldStone = wStone; // 현재 바둑돌 저장
+				oldWhiteStone = wStone; // 현재 바둑돌 저장
 				OmokPanel.this.add(wStone);
 			}
 			
