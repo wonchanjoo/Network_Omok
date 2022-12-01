@@ -635,6 +635,9 @@ public class OmokServer extends JFrame {
 					else if (cm.code.matches("311")) { //무르기 허용
 						String str = "[" + cm.UserName + "]님이 무르기를 허용하셨습니다.";
 						AppendText(str);
+						
+						// 서버 board 처리해야함!
+						
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
 							if(roomId == user.roomId) {

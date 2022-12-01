@@ -50,6 +50,7 @@ public class WaitingRoomPanel extends JPanel {
 	public JList<String> allUserList;
 	public DefaultListModel<String> allUserModel;
 	private CreateRoomFrame createRoomFrame;
+	private int returnFlag = 0;
 	
 	private Socket socket; // 연결 소켓
 	private ObjectInputStream ois;
@@ -354,7 +355,7 @@ public class WaitingRoomPanel extends JPanel {
 							gamePanel.omokPanel.whitePlayerName.setText(whiteSt.nextToken());
 						}
 						// 관전자가 접속하는 경우 data에서 player의 이름을 가져와 화면에 표시
-						if(chatMsg.role == chatMsg.watch) {
+						if(chatMsg.role == chatMsg.view) {
 							StringTokenizer viewerSt = new StringTokenizer(chatMsg.data);
 							gamePanel.omokPanel.blackPlayerName.setText(viewerSt.nextToken());
 							gamePanel.omokPanel.whitePlayerName.setText(viewerSt.nextToken());
@@ -430,9 +431,11 @@ public class WaitingRoomPanel extends JPanel {
 					// 서버로부터 계산된 마우스 이벤트
 					case "301":
 						omokPanel.putStone(chatMsg.point.x, chatMsg.point.y, chatMsg.role);
-						if(chatMsg.role == omokPanel.role) // 내가 보낸 좌표면
+						if(returnFlag == 1)
+							returnFlag = 0;
+						else if(chatMsg.role == omokPanel.role) // 내가 보낸 좌표면
 							omokPanel.setStatus(false); // 내 차례가 아니므로 false
-						else if(chatMsg.role != omokPanel.role && omokPanel.role != chatMsg.watch){ // 상대방이 보낸 좌표면
+						else if(chatMsg.role != omokPanel.role && omokPanel.role != chatMsg.view){ // 상대방이 보낸 좌표면
 							omokPanel.setStatus(true); // 내 차례므로 true
 							chatPanel.putBtn.setEnabled(true); // 착수 버튼 활성화
 						}
@@ -460,7 +463,7 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 무르기 허용
 					case "311":
-						if(chatMsg.UserName.equals(userName))
+						if(chatMsg.role != omokPanel.role && omokPanel.role != omokPanel.view)
 							JOptionPane.showMessageDialog(mainFrame, "상대방이 무르기를 허용 했습니다.", "무르기", JOptionPane.PLAIN_MESSAGE);
 						
 						if(chatMsg.role == chatMsg.black)
@@ -468,6 +471,11 @@ public class WaitingRoomPanel extends JPanel {
 						else if(chatMsg.role == chatMsg.white)
 							omokPanel.remove(omokPanel.oldWhiteStone);
 						omokPanel.repaint();
+						
+						if(chatMsg.role == omokPanel.role) {
+							JOptionPane.showMessageDialog(mainFrame, "다시 착수하세요!", "무르기", JOptionPane.PLAIN_MESSAGE);
+							returnFlag = 1;
+						}
 						break;
 					// 무르기 거절
 					case "312":

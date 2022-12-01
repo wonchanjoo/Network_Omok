@@ -8,7 +8,7 @@ public class ChatMsg implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public final int black = 0;
 	public final int white = 1;
-	public final int watch = 2;
+	public final int view = 2;
 	
 	public String code;
 	public String UserName;
