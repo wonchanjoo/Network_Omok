@@ -15,6 +15,9 @@ public class OmokRoom {
 	public int[][] board = new int[19][19]; // 오목판, 방마다 하나씩 가지고 있어야함
 	public String data = "";
 	
+	public int currentBoardX;
+	public int currentBoardY;
+	
 	public OmokRoom(long roomId, String creater) {
 		this.roomId = roomId;
 		this.player.add(creater);
@@ -30,22 +33,28 @@ public class OmokRoom {
 		}
 	}
 	
-	//오목 승자 판별, static으로 하는 것을 더 추천
+	//오목 승자 판별
 	public boolean CheckOmok(int blwh) {
+		//고쳐야함
+		
 		for(int i=0; i<19; i++) {
 			for(int j=0; j<19; j++) {
-				if(board[i][j]==blwh && board[i][j+1]==blwh && board[i][j+2]==blwh && board[i][j+3]==blwh && board[i][j+4]==blwh) return true;
-				else if(board[i][j]==blwh && board[i+1][j]==blwh && board[i+2][j]==blwh && board[i+3][j]==blwh && board[i+4][j]==blwh) return true;
-				else if(board[i][j]==blwh && board[i+1][j+1]==blwh && board[i+2][j+2]==blwh && board[i+3][j+3]==blwh && board[i+4][j+4]==blwh) return true;
-				else if(board[i][j]==blwh && board[i+1][j-1]==blwh && board[i+2][j-2]==blwh && board[i+3][j-3]==blwh && board[i+4][j-4]==blwh) return true;
+				if(board[j][i]==blwh && board[j][i+1]==blwh && board[j][i+2]==blwh && board[j][i+3]==blwh && board[j][i+4]==blwh) return true;
+				else if(board[j][i]==blwh && board[j+1][i]==blwh && board[j+2][i]==blwh && board[j+3][i]==blwh && board[j+4][i]==blwh) return true;
+				else if(board[j][i]==blwh && board[j+1][i+1]==blwh && board[j+2][i+2]==blwh && board[j+3][i+3]==blwh && board[j+4][i+4]==blwh) return true;
+				else if(board[j][i]==blwh && board[j+1][i-1]==blwh && board[j+2][i-2]==blwh && board[j+3][i-3]==blwh && board[j+4][i-4]==blwh) {
+					System.out.println("대각선");
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 	
 	public boolean omokGame(Point point, int role) {
-		int boardX = (point.x-37)/27;
-		int boardY = (point.y-110)/27;
+		int boardX = (point.x-24)/27;
+		int boardY = (point.y-97)/27;
+		boolean samsam = false;
 		
 		if(board[boardX][boardY] != 0) {
 			data = "location error";
@@ -53,15 +62,370 @@ public class OmokRoom {
 		}
 		
 		if(role == black) {
-			board[boardX][boardY] = 1;
+			samsam = SamSamRule(boardX, boardY);
+		}
+		
+		if(samsam) {
+			data = "삼삼입니다";
+			System.out.println(data);
+			return false;
+		}
+		
+		currentBoardX = boardX;
+		currentBoardY = boardY;
+		
+		if(role == black) {
+			board[currentBoardX][currentBoardY] = 1;
 			//winner = CheckOmok(1);
 		}
 		else if(role == white){
-			board[boardX][boardY] = 2;
+			board[currentBoardX][currentBoardY] = 2;
 			//winner = CheckOmok(2);
 		}
 		
+		for(int i=0; i<19; i++) {
+			for(int j=0; j<19; j++) {
+				System.out.print(board[j][i]);
+			}
+			System.out.println();
+		}
+		
+		System.out.println("[System] board[10][9] : " + board[10][9]);
+		
 		return true;
 	}
+	
+	public boolean SamSamRule(int boardX, int boardY) {
+		int count = 0;
+		count += find1(boardX, boardY);
+		count += find2(boardX, boardY);
+		count += find3(boardX, boardY);
+		count += find3(boardX, boardY);
+		if(count >= 2) return true;
+		else return false;
+	}
+	
+	//가로줄 검사
+	private int find1(int boardX, int boardY) {
+		int stone1 = 0;
+		int stone2 = 0;
+		int allStone = 0;
+		int blink1 = 1;
+		
+		int xx = boardX - 1;
+		boolean check = false;
+		//왼쪽방향 탐색
+		System.out.println("찍습니다.");
+		for(int i = xx; i > 0; i--) {
+			//흰돌을 만나면 탐색 중지
+			System.out.print("[" + i + "] : " + board[boardY][i] + " ");
+			if(board[i][boardY] == 2) break;
+			//흑돌이면
+			if(board[i][boardY] == 1) {
+				check = false;
+				stone1++;
+			}
+			//빈 공간이면
+			if(board[i][boardY] == 0) {
+				if(check == false) {
+					check = true;
+				}
+				else {
+					blink1++;
+					break;
+				}
+				
+				if(blink1 == 1) blink1--;
+				else break;
+			}
+			
+		}
+		
+		//오른쪽방향 탐색
+		xx = boardX + 1;
+		int blink2 = blink1;
+		if(blink1 == 1) blink1 = 0;
+		check = false;
+		for(int i = xx; i < 19; i++) {
+			//흰돌을 만나면 탐색 중지
+			if(board[i][boardY] == 2) break;
+			//흑돌이면
+			if(board[i][boardY] == 1) {
+				check = false;
+				stone2++;
+			}
+			//빈 공간이면
+			if(board[i][boardY] == 0) {
+				if(check == false) {
+					check = true;
+				}
+				else {
+					blink2++;
+					break;
+				}
+				
+				if(blink2 == 1) blink2--;
+				else break;
+			}
+			
+		}
+		
+		
+		allStone = stone1 + stone2;
+		if(allStone != 2) return 0;
+		
+		int left = stone1 + blink1;
+		int right = stone2 + blink2;
+		
+		//놓은 돌을 기준으로 삼삼 가능성이 있는 돌들이 벽에 막힌 경우 삼삼이 아님
+		if(boardX - left == 0 || boardX + right == 18) return 0;
+		//놓은 돌을 기준으로 삼삼 가능성이 있는 돌들이 흰돌에 막힌 경우 삼삼이 아님
+		else if(board[boardX - left - 1][boardY] == 2 || board[boardX + right + 1][boardY] == 2) return 0;
+		else return 1;
+	}
 
+	private int find2(int boardX, int boardY) {
+		int stone1 = 0;
+		int stone2 = 0;
+		int allStone = 0;
+		int blink1 = 1;
+		boolean check = false;
+
+		//위쪽방향 탐색
+		int yy = boardY - 1;
+		for(int i = yy; i > 0; i--) {
+			//흰돌을 만나면 탐색 중지
+			if(board[boardX][i] == 2) break;
+			//흑돌이면
+			if(board[boardX][i] == 1) {
+				check = false;
+				stone1++;
+			}
+			//빈 공간이면
+			if(board[boardX][i] == 0) {
+				if(check == false) {
+					check = true;
+				}
+				else {
+					blink1++;
+					break;
+				}
+				
+				if(blink1 == 1) blink1--;
+				else break;
+			}
+			
+		}
+		
+		yy = boardY + 1;
+		int blink2 = blink1;
+		if(blink1 == 1) blink1 = 0;
+		check = false;
+		for(int i = yy; i < 19; i++) {
+			//흰돌을 만나면 탐색 중지
+			if(board[boardX][i] == 2) break;
+			//흑돌이면
+			if(board[boardX][i] == 1) {
+				check = false;
+				stone2++;
+			}
+			//빈 공간이면
+			if(board[boardX][i] == 0) {
+				if(check == false) {
+					check = true;
+				}
+				else {
+					blink2++;
+					break;
+				}
+				
+				if(blink2 == 1) blink2--;
+				else break;
+			}
+			
+		}
+		
+		
+		allStone = stone1 + stone2;
+		if(allStone != 2) return 0;
+		
+		int up = stone1 + blink1;
+		int down = stone2 + blink2;
+		
+		//놓은 돌을 기준으로 삼삼 가능성이 있는 돌들이 벽에 막힌 경우 삼삼이 아님
+		if(boardY - up == 0 || boardY + down == 18) return 0;
+		//놓은 돌을 기준으로 삼삼 가능성이 있는 돌들이 흰돌에 막힌 경우 삼삼이 아님
+		else if(board[boardX][boardY - up -1] == 2 || board[boardX][boardY + down +1] == 2) return 0;
+		else return 1;
+	}
+	
+	// 왼쪽 위 대각선 방향
+	private int find3(int boardX, int boardY) {
+		int stone1 = 0;
+		int stone2 = 0;
+		int allStone = 0;
+		int blink1 = 1;
+		boolean check = false;
+
+		//왼쪽 위 방향 탐색
+		int xx = boardX - 1;
+		int yy = boardY - 1;
+		while(true) {
+			//벽을 만나면 탐색 중지
+			if(xx == -1 || yy == -1) break;
+			//흰돌을 만나면 탐색 중지
+			if(board[xx][yy] == 2) break;
+			//흑돌이면
+			if(board[xx][yy] == 1) {
+				check = false;
+				stone1++;
+			}
+			//빈 공간이면
+			if(board[xx][yy] == 0) {
+				if(check == false) {
+					check = true;
+				}
+				else {
+					blink1++;
+					break;
+				}
+				
+				if(blink1 == 1) blink1--;
+				else break;
+			}
+			xx--;
+			yy--;
+		}
+		
+		//오른쪽 아래 방향 탐색
+		xx = boardX + 1;
+		yy = boardY + 1;
+		int blink2 = blink1;
+		if(blink1 == 1) blink1 = 0;
+		check = false;
+		while(true) {
+			//벽을 만나면 탐색 중지
+			if(xx == 19 || yy == 19) break;
+			//흰돌을 만나면 탐색 중지
+			if(board[xx][yy] == 2) break;
+			//흑돌이면
+			if(board[xx][yy] == 1) {
+				check = false;
+				stone2++;
+			}
+			//빈 공간이면
+			if(board[xx][yy] == 0) {
+				if(check == false) {
+					check = true;
+				}
+				else {
+					blink2++;
+					break;
+				}
+				
+				if(blink2 == 1) blink2--;
+				else break;
+			}
+			xx++;
+			yy++;
+		}
+		
+		
+		allStone = stone1 + stone2;
+		if(allStone != 2) return 0;
+		
+		int leftUp = stone1 + blink1;
+		int rightDown = stone2 + blink2;
+		
+		//놓은 돌을 기준으로 삼삼 가능성이 있는 돌들이 벽에 막힌 경우 삼삼이 아님
+		if(boardX - leftUp == 0 || boardY - leftUp == 0 || boardX + rightDown == 18 || boardY + rightDown == 18) return 0;
+		//놓은 돌을 기준으로 삼삼 가능성이 있는 돌들이 흰돌에 막힌 경우 삼삼이 아님
+		else if(board[boardX - leftUp - 1][boardY - leftUp - 1] == 2 || board[boardX + rightDown + 1][boardY + rightDown + 1] == 2) return 0;
+		else return 1;
+	}
+	
+	//오른쪽 위 대각선 방향 탐색
+	private int find4(int boardX, int boardY) {
+		int stone1 = 0;
+		int stone2 = 0;
+		int allStone = 0;
+		int blink1 = 1;
+		boolean check = false;
+
+		//오른쪽 위 방향 탐색
+		int xx = boardX + 1;
+		int yy = boardY - 1;
+		while(true) {
+			//벽을 만나면 탐색 중지
+			if(xx == 19 || yy == -1) break;
+			//흰돌을 만나면 탐색 중지
+			if(board[xx][yy] == 2) break;
+			//흑돌이면
+			if(board[xx][yy] == 1) {
+				check = false;
+				stone1++;
+			}
+			//빈 공간이면
+			if(board[xx][yy] == 0) {
+				if(check == false) {
+					check = true;
+				}
+				else {
+					blink1++;
+					break;
+				}
+				
+				if(blink1 == 1) blink1--;
+				else break;
+			}
+			xx++;
+			yy--;
+		}
+		
+		//왼쪽 아래 방향 탐색
+		xx = boardX - 1;
+		yy = boardY + 1;
+		int blink2 = blink1;
+		if(blink1 == 1) blink1 = 0;
+		check = false;
+		while(true) {
+			//벽을 만나면 탐색 중지
+			if(xx == -1 || yy == 19) break;
+			//흰돌을 만나면 탐색 중지
+			if(board[xx][yy] == 2) break;
+			//흑돌이면
+			if(board[xx][yy] == 1) {
+				check = false;
+				stone2++;
+			}
+			//빈 공간이면
+			if(board[xx][yy] == 0) {
+				if(check == false) {
+					check = true;
+				}
+				else {
+					blink2++;
+					break;
+				}
+				
+				if(blink2 == 1) blink2--;
+				else break;
+			}
+			xx--;
+			yy++;
+		}
+		
+		
+		allStone = stone1 + stone2;
+		if(allStone != 2) return 0;
+		
+		int rightUp = stone1 + blink1;
+		int leftDown = stone2 + blink2;
+		
+		//놓은 돌을 기준으로 삼삼 가능성이 있는 돌들이 벽에 막힌 경우 삼삼이 아님
+		if(boardX + rightUp == 18 || boardY - rightUp == 0 || boardX - leftDown == 0 || boardY + leftDown == 18) return 0;
+		//놓은 돌을 기준으로 삼삼 가능성이 있는 돌들이 흰돌에 막힌 경우 삼삼이 아님
+		else if(board[boardX + rightUp + 1][boardY - rightUp - 1] == 2 || board[boardX - leftDown - 1][boardY + leftDown + 1] == 2) return 0;
+		else return 1;
+	}
 }

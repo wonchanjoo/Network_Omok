@@ -337,9 +337,9 @@ public class OmokServer extends JFrame {
 				for(int c = 0; c < 19; c++) {
 					// 흑돌이 있는 경우
 					if(b[r][c] == 1) {
-						int x = 27 * r + 37;
-						int y = 27 * c + 110;
-						Point p = new Point(x + 13, y + 13);
+						int x = 27 * r + 24;
+						int y = 27 * c + 97;
+						Point p = new Point(x, y);
 						
 						ChatMsg obj = new ChatMsg("SERVER", "301", "흑돌");
 						obj.roomId = id;
@@ -349,9 +349,9 @@ public class OmokServer extends JFrame {
 					}
 					// 백돌이 있는 경우
 					else if(b[r][c] == 2) {
-						int x = 27 * r + 37;
-						int y = 27 * c + 110;
-						Point p = new Point(x + 13, y + 13);
+						int x = 27 * r + 24;
+						int y = 27 * c + 97;
+						Point p = new Point(x, y);
 						
 						ChatMsg obj = new ChatMsg("SERVER", "301", "백돌");
 						obj.roomId = id;
@@ -535,6 +535,9 @@ public class OmokServer extends JFrame {
 							obj.peopleCount = omokRoom.peopleCount;
 							obj.roomStatus = omokRoom.status;
 							WriteOneObject(obj);
+							System.out.println(i+1 + " : " + obj.roomId);
+							System.out.println(i+1 + " : " + obj.roomName);
+							//oos.writeObject(obj);
 						}
 					}
 					// 301 마우스 좌표
@@ -554,6 +557,7 @@ public class OmokServer extends JFrame {
 						} // for문 끝
 						
 						validOmok = findRoom.omokGame(cm.point, this.role);
+						System.out.println("role : " + this.role);
 						
 						//findRoom.data에 착수 거부 이유를 가지고 있음
 						if(validOmok == false) {
