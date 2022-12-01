@@ -45,16 +45,28 @@ public class OmokRoom {
 		System.out.println("-------------------------------------");
 	}
 	
-	//오목 승자 판별, bug 고쳐야함
+	//오목 승자 판별
 	public boolean CheckOmok(int blwh) {
-		for(int i=0; i<19; i++) {
+		for(int i=0; i<15; i++) {
 			for(int j=0; j<19; j++) {
 				if(board[j][i]==blwh && board[j][i+1]==blwh && board[j][i+2]==blwh && board[j][i+3]==blwh && board[j][i+4]==blwh) return true;
-				else if(board[j][i]==blwh && board[j+1][i]==blwh && board[j+2][i]==blwh && board[j+3][i]==blwh && board[j+4][i]==blwh) return true;
-				else if(board[j][i]==blwh && board[j+1][i+1]==blwh && board[j+2][i+2]==blwh && board[j+3][i+3]==blwh && board[j+4][i+4]==blwh) return true;
-				else if(board[j][i]==blwh && board[j+1][i-1]==blwh && board[j+2][i-2]==blwh && board[j+3][i-3]==blwh && board[j+4][i-4]==blwh) return true;
 			}
 		}
+		for(int i=0; i<19; i++) {
+			for(int j=0; j<15; j++) {
+				if(board[j][i]==blwh && board[j+1][i]==blwh && board[j+2][i]==blwh && board[j+3][i]==blwh && board[j+4][i]==blwh) return true;
+			}
+		}
+		for(int i=0; i<15; i++) {
+			for(int j=0; j<15; j++) {
+				if(board[j][i]==blwh && board[j+1][i+1]==blwh && board[j+2][i+2]==blwh && board[j+3][i+3]==blwh && board[j+4][i+4]==blwh) return true;
+			}
+		}
+		for(int i=0; i<15; i++) {
+			for(int j=0; j<15; j++) {
+				if(board[j][18-i]==blwh && board[j+1][17-i]==blwh && board[j+2][16-i]==blwh && board[j+3][15-i]==blwh && board[j+4][14-i]==blwh) return true;
+			}
+		}	
 		return false;
 	}
 	
@@ -97,6 +109,7 @@ public class OmokRoom {
 		count += find2(boardX, boardY);
 		count += find3(boardX, boardY);
 		count += find4(boardX, boardY);
+		System.out.println(count);
 		if(count >= 2) return true;
 		else return false;
 	}

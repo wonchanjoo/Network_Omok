@@ -161,8 +161,8 @@ public class OmokServer extends JFrame {
 		private Vector user_vc;
 		public String UserName = "";
 		//public Vector<UserService> player = new Vector<>();
-		public long roomId;
-		public int role;
+		public long roomId = -1;
+		public int role = -1;
 
 		public UserService(Socket client_socket) {
 			// TODO Auto-generated constructor stub
@@ -233,6 +233,8 @@ public class OmokServer extends JFrame {
 			
 			ChatMsg obj = new ChatMsg("SERVER", "325", "GameOver");
 			obj.roomId = this.roomId;
+			this.roomId = -1;
+			this.role = -1;
 			WriteAllObject(obj);
 		}
 
@@ -414,9 +416,11 @@ public class OmokServer extends JFrame {
 						
 						// 처음 들어온 사람은 흑돌이라고 전송해준다
 						ChatMsg obj = new ChatMsg("server", "201", cm.UserName);
-						obj.role = obj.black; // 흑돌
+						this.role = obj.black; // 흑돌
+						obj.role = this.role;
 						obj.roomId = cm.roomId;
 						this.roomId = cm.roomId;
+						System.out.println("처음 사람의 role : " + this.role);
 						oos.writeObject(obj);
 					}
 					// 방 접속
@@ -432,6 +436,7 @@ public class OmokServer extends JFrame {
 						} // for문 끝
 						
 						// player size = 0 이면 이번에 접속한 유저가 흑돌
+						//이거 필요없지 않나요???
 						if(findRoom.player.size() == 0) {
 							ChatMsg obj = new ChatMsg(UserName, "201", cm.UserName);
 							obj.role = obj.black;
@@ -448,6 +453,7 @@ public class OmokServer extends JFrame {
 							obj.roomId = cm.roomId;
 							this.role = obj.white;
 							this.roomId = cm.roomId;
+							System.out.println("role : " + this.role);
 							WriteOneObject(obj);
 							findRoom.player.add(UserName); // player 리스트에 추가
 						}
@@ -565,7 +571,7 @@ public class OmokServer extends JFrame {
 						}
 						
 						//Console 창에 오목 배열 띄우기
-						//System.out.println("role(0: 흑돌, 1: 흰돌) : " + this.role);
+						//System.out.println("role(0: 흑돌, 1: 흰돌) : " + cm.role);
 						//findRoom.DisplayOmok();
 						
 						//좌표를 모든 참가자에게 뿌려준다.
