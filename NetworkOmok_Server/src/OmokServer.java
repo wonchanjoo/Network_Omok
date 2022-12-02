@@ -334,34 +334,14 @@ public class OmokServer extends JFrame {
 				return;
 			}
 			
-			int[][] b = findRoom.board;
-			for(int r = 0; r < 19; r++) {
-				for(int c = 0; c < 19; c++) {
-					// 흑돌이 있는 경우
-					if(b[r][c] == 1) {
-						int x = 27 * r + 24;
-						int y = 27 * c + 97;
-						Point p = new Point(x, y);
-						
-						ChatMsg obj = new ChatMsg("SERVER", "301", "흑돌");
-						obj.roomId = id;
-						obj.role = black;
-						obj.point = p;
-						WriteOneObject(obj);
-					}
-					// 백돌이 있는 경우
-					else if(b[r][c] == 2) {
-						int x = 27 * r + 24;
-						int y = 27 * c + 97;
-						Point p = new Point(x, y);
-						
-						ChatMsg obj = new ChatMsg("SERVER", "301", "백돌");
-						obj.roomId = id;
-						obj.role = white;
-						obj.point = p;
-						WriteOneObject(obj);
-					}
-				}
+			for(int i = 0; i < findRoom.stoneList.size(); i++) {
+				Point p = findRoom.stoneList.get(i).point;
+				ChatMsg obj = new ChatMsg("SERVER", "301", "point");
+				obj.roomId = id;
+				obj.point = p;
+				obj.role = findRoom.stoneList.get(i).role;
+				
+				WriteOneObject(obj);
 			}
 		}
 		
@@ -435,19 +415,8 @@ public class OmokServer extends JFrame {
 							}
 						} // for문 끝
 						
-						// player size = 0 이면 이번에 접속한 유저가 흑돌
-						//이거 필요없지 않나요???
-						if(findRoom.player.size() == 0) {
-							ChatMsg obj = new ChatMsg(UserName, "201", cm.UserName);
-							obj.role = obj.black;
-							obj.roomId = cm.roomId;
-							this.role = obj.black;
-							this.roomId = cm.roomId;
-							WriteOneObject(obj);
-							findRoom.player.add(UserName); // player 리스트에 추가
-						}
 						// player size = 1 이면 이번에 접속한 유저가 백돌
-						else if(findRoom.player.size() == 1) {
+						if(findRoom.player.size() == 1) {
 							ChatMsg obj = new ChatMsg(UserName, "201", findRoom.player.get(0) + " " + cm.UserName);
 							obj.role = obj.white;
 							obj.roomId = cm.roomId;
@@ -586,6 +555,9 @@ public class OmokServer extends JFrame {
 							}
 						}
 						
+						// 바둑돌 좌표 리스트에 좌표 추가
+						findRoom.stoneList.add(new Stone(cm.role, cm.point));
+						
 						//승자 판별...
 						if(role == black) {
 							winner = findRoom.CheckOmok(1);
@@ -643,6 +615,13 @@ public class OmokServer extends JFrame {
 						AppendText(str);
 						
 						// 서버 board 처리해야함!
+						for(int i=0; i<RoomVector.size(); i++) {
+							OmokRoom o = RoomVector.get(i);
+							if(o.roomId == cm.roomId) {
+								o.deletePoint(cm.point);
+								break;
+							}
+						}
 						
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);

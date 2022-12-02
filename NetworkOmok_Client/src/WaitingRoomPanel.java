@@ -50,7 +50,7 @@ public class WaitingRoomPanel extends JPanel {
 	public JList<String> allUserList;
 	public DefaultListModel<String> allUserModel;
 	private CreateRoomFrame createRoomFrame;
-	private int returnFlag = 0;
+	public int returnFlag = 0;
 	
 	private Socket socket; // 연결 소켓
 	private ObjectInputStream ois;
@@ -249,7 +249,10 @@ public class WaitingRoomPanel extends JPanel {
 			chatMsg.role = omokPanel.role;
 			chatMsg.roomId = gamePanel.roomId;
 			oos.writeObject(chatMsg);
-			omokPanel.setStatus(false);
+			if(returnFlag == 0) {
+				omokPanel.setStatus(false);
+				chatPanel.putBtn.setEnabled(false);
+			}
 		} catch (Exception e) {
 			System.out.println("sendMousePoint error");
 		}
@@ -362,7 +365,6 @@ public class WaitingRoomPanel extends JPanel {
 						}
 						
 						cardLayout.show(container, "gamePanel"); // GamePanel로 전환
-						
 						gamePanel.roomUserList();
 						break;
 					// 게임 방에 접속 할 수 없는 경우
@@ -453,6 +455,10 @@ public class WaitingRoomPanel extends JPanel {
 							chatMsg = new ChatMsg(userName, "311", "YES");
 							chatMsg.roomId = waitingRoomPanel.roomId;
 							chatMsg.role = omokPanel.role;
+							if(omokPanel.role == omokPanel.black)
+								chatMsg.point = omokPanel.oldBlackStone.getLocation();
+							else
+								chatMsg.point = omokPanel.oldWhiteStone.getLocation();
 							sendObject(chatMsg);
 						} else { // 무르기 거절
 							chatMsg = new ChatMsg(userName, "312", "NO");
@@ -463,18 +469,20 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 무르기 허용
 					case "311":
-						if(chatMsg.role != omokPanel.role && omokPanel.role != omokPanel.view)
-							JOptionPane.showMessageDialog(mainFrame, "상대방이 무르기를 허용 했습니다.", "무르기", JOptionPane.PLAIN_MESSAGE);
-						
 						if(chatMsg.role == chatMsg.black)
 							omokPanel.remove(omokPanel.oldBlackStone);
 						else if(chatMsg.role == chatMsg.white)
 							omokPanel.remove(omokPanel.oldWhiteStone);
 						omokPanel.repaint();
 						
+						if(chatMsg.role != omokPanel.role && omokPanel.role != omokPanel.view) {
+							JOptionPane.showMessageDialog(mainFrame, "상대방이 무르기를 허용 했습니다.", "무르기", JOptionPane.PLAIN_MESSAGE);
+							returnFlag = 1;
+						}
+						
 						if(chatMsg.role == omokPanel.role) {
 							JOptionPane.showMessageDialog(mainFrame, "다시 착수하세요!", "무르기", JOptionPane.PLAIN_MESSAGE);
-							returnFlag = 1;
+							returnFlag = 1; // 한번 더 착수할 수 있도록 flag = 1;
 						}
 						break;
 					// 무르기 거절

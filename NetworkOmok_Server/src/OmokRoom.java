@@ -1,4 +1,6 @@
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 public class OmokRoom {
@@ -13,6 +15,7 @@ public class OmokRoom {
 	public Vector<String> player = new Vector<>();
 	public Vector<String> viewer = new Vector<>();
 	public int[][] board = new int[19][19]; // 오목판, 방마다 하나씩 가지고 있어야함
+	public List<Stone> stoneList = new ArrayList<>();
 	public String data = "";
 	
 	public int currentBoardX;
@@ -101,6 +104,17 @@ public class OmokRoom {
 			//winner = CheckOmok(2);
 		}
 		return true;
+	}
+	
+	public void deletePoint(Point point) {
+		for(int i = stoneList.size() - 1; i >= 0; i--)
+			if(stoneList.get(i).point == point) {
+				stoneList.remove(i);
+				break;
+			}
+		int boardX = (point.x - 24) / 27;
+		int boardY = (point.y - 97) / 27;
+		board[boardX][boardY] = 0;
 	}
 	
 	public boolean SamSamRule(int boardX, int boardY) {

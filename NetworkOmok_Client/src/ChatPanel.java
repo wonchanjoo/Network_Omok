@@ -117,7 +117,6 @@ public class ChatPanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			waitingRoomPanel.sendMousePoint();
-			putBtn.setEnabled(false); // 착수 버튼 비활성화
 		}
 	}
 	
