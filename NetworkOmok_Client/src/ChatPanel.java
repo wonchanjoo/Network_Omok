@@ -1,7 +1,11 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -28,6 +32,8 @@ public class ChatPanel extends JPanel{
 	public JButton putBtn;
 	public JButton returnBtn;
 	public JButton abstentionBtn;
+	private File putSoundFile;
+	private Clip putSoundClip;
 	
 	public ChatPanel(WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
@@ -76,6 +82,8 @@ public class ChatPanel extends JPanel{
 			abstentionBtn.setEnabled(false);
 			abstentionBtn.addActionListener(new AbstentionRequestAction());
 			this.add(abstentionBtn);
+			
+			putSoundFile = new File("put_sound.wav");			
 	}
 	
 	// 채팅창 좌측에 메시지 출력
@@ -112,10 +120,22 @@ public class ChatPanel extends JPanel{
 		textArea.setCaretPosition(len);
 	}
 	
+	private void putStoneSound() {
+		try {
+			putSoundClip = AudioSystem.getClip();
+			putSoundClip.open(AudioSystem.getAudioInputStream(putSoundFile));
+			putSoundClip.loop(0);
+			putSoundClip.start();
+		} catch (Exception e) {
+			System.out.println("put sound error");
+		}
+	}
+	
 	// 착수 버튼 클릭 했을 때 waitingRoomPanel에게 좌표 전달 해달라고 요청하는 액션 리스너
 	class PutAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			putStoneSound();
 			waitingRoomPanel.sendMousePoint();
 		}
 	}
