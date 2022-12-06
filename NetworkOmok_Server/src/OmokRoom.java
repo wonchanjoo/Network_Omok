@@ -11,12 +11,13 @@ public class OmokRoom {
 	public long roomId;
 	public int peopleCount = 0;
 	public int status = 0;
-	public String password;
+	public boolean isPassword = false;
+	public String password = null;
 	public Vector<String> player = new Vector<>();
 	public Vector<String> viewer = new Vector<>();
 	public int[][] board = new int[19][19]; // 오목판, 방마다 하나씩 가지고 있어야함
 	public List<Stone> stoneList = new ArrayList<>();
-	public String data = "";
+	public String data = null;
 	
 	public int currentBoardX;
 	public int currentBoardY;

@@ -19,6 +19,7 @@ public class ChatMsg implements Serializable {
 	public long roomId;
 	public String roomName;
 	public String password;
+	public boolean isPassword;
 	public int peopleCount;
 	public int roomStatus;
 

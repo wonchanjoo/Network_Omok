@@ -210,14 +210,13 @@ public class OmokServer extends JFrame {
 
 		public void Logout() {
 			long logoutUserRoomId = this.roomId;
-			
-			UserVec.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
 			String data = "";
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
 				data += user.UserName + " ";
 			}
 			WriteAll("211", data);
+			UserVec.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
 			AppendText("사용자 " + "[" + UserName + "] 퇴장. 현재 참가자 수 " + UserVec.size());
 		}
 		
@@ -383,7 +382,13 @@ public class OmokServer extends JFrame {
 						OmokRoom omokRoom = new OmokRoom(cm.roomId, cm.UserName);
 						omokRoom.peopleCount = cm.peopleCount;
 						omokRoom.roomName = cm.roomName;
-						omokRoom.password = cm.password;
+						
+						if(cm.password != null) {
+							omokRoom.isPassword = true;
+							omokRoom.password = cm.password;
+							cm.isPassword = true;
+						}
+						
 						omokRoom.roomId = cm.roomId;
 						RoomVector.add(omokRoom);
 						
@@ -400,8 +405,12 @@ public class OmokServer extends JFrame {
 						obj.role = this.role;
 						obj.roomId = cm.roomId;
 						this.roomId = cm.roomId;
-						System.out.println("처음 사람의 role : " + this.role);
+						//System.out.println("처음 사람의 role : " + this.role);
 						oos.writeObject(obj);
+						
+						ChatMsg obj1 = new ChatMsg("server", "400", "다른 참가자가 들어올 때 까지 잠시만 기다려 주세요...");
+						obj.roomId = cm.roomId;
+						oos.writeObject(obj1);
 					}
 					// 방 접속
 					else if(cm.code.matches("201")) { 
@@ -411,9 +420,23 @@ public class OmokServer extends JFrame {
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
 							// task : 비밀번호 처리도 해야함
 							if(cm.roomId == omokRoom.roomId) { // 클라이언트가 보낸 roomId를 비교해 해당 방을 찾는다
-								findRoom = omokRoom; // 찾은 방 저장
+								if(omokRoom.isPassword && cm.password == omokRoom.password) {
+									findRoom = omokRoom;
+									break;
+								}
+								else if(!omokRoom.isPassword) {
+									findRoom = omokRoom; // 찾은 방 저장
+									break;
+								}
+								else break;
 							}
 						} // for문 끝
+						
+						if(findRoom == null) { //비밀번호가 맞지 않는 방
+							ChatMsg obj = new ChatMsg("SERVER", "202", "방 접속 실패 : 비밀번호가 맞지 않음");
+							WriteOneObject(obj);
+							continue;
+						}
 						
 						// player size = 1 이면 이번에 접속한 유저가 백돌
 						if(findRoom.player.size() == 1) {
@@ -487,16 +510,16 @@ public class OmokServer extends JFrame {
 							//AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + currentRoom.player.size());
 							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + findRoom.player.size());
 						}
-						else if(findRoom.player.size() == 1){ // 아직 player가 2명이 안 된 경우
-							ChatMsg obj = new ChatMsg("server", "400", "다른 참가자가 들어올 때 까지 잠시만 기다려 주세요...");
-							for (int i = 0; i < user_vc.size(); i++) {
-								UserService user = (UserService) user_vc.elementAt(i);
-								if(roomId == user.roomId) {
-									user.oos.writeObject(obj);
-								}
-							}
-							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + findRoom.player.size());
-						}
+//						else if(findRoom.player.size() == 1){ // 아직 player가 2명이 안 된 경우
+//							ChatMsg obj = new ChatMsg("server", "400", "다른 참가자가 들어올 때 까지 잠시만 기다려 주세요...");
+//							for (int i = 0; i < user_vc.size(); i++) {
+//								UserService user = (UserService) user_vc.elementAt(i);
+//								if(roomId == user.roomId) {
+//									user.oos.writeObject(obj);
+//								}
+//							}
+//							AppendText("현재 [" + roomId + "]방에 있는 플레이어 수 : " + findRoom.player.size());
+//						}
 					} // 201 방 접속 끝
 					// 210 방 목록 전송(처음 클라이언트가 접속할 때 방 목록 뿌려주기용)
 					else if (cm.code.matches("210")) {
@@ -536,6 +559,7 @@ public class OmokServer extends JFrame {
 						if(validOmok == false) {
 							ChatMsg msg1 = new ChatMsg("server", "302", findRoom.data);
 							oos.writeObject(msg1);
+							findRoom.data = null;
 							continue;
 						}
 						
