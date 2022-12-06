@@ -108,11 +108,13 @@ public class OmokRoom {
 	}
 	
 	public void deletePoint(Point point) {
-		for(int i = stoneList.size() - 1; i >= 0; i--)
-			if(stoneList.get(i).point == point) {
+		for(int i = stoneList.size() - 1; i >= 0; i--) {
+			Stone p = stoneList.get(i);
+			if(p.point.x == point.x && p.point.y == point.y) {
 				stoneList.remove(i);
 				break;
 			}
+		}
 		int boardX = (point.x - 24) / 27;
 		int boardY = (point.y - 97) / 27;
 		board[boardX][boardY] = 0;

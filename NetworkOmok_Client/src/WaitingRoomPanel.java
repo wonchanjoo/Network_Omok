@@ -455,6 +455,7 @@ public class WaitingRoomPanel extends JPanel {
 								chatMsg.point = omokPanel.oldBlackStone.getLocation();
 							else
 								chatMsg.point = omokPanel.oldWhiteStone.getLocation();
+							System.out.println("point = " + chatMsg.point);
 							sendObject(chatMsg);
 						} else { // 무르기 거절
 							chatMsg = new ChatMsg(userName, "312", "NO");

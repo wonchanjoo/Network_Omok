@@ -638,6 +638,7 @@ public class OmokServer extends JFrame {
 						String str = "[" + cm.UserName + "]님이 무르기를 허용하셨습니다.";
 						AppendText(str);
 						
+						System.out.println("point = " + cm.point);
 						// 서버 board 처리해야함!
 						for(int i=0; i<RoomVector.size(); i++) {
 							OmokRoom o = RoomVector.get(i);
