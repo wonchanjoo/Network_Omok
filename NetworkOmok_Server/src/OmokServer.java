@@ -210,13 +210,13 @@ public class OmokServer extends JFrame {
 
 		public void Logout() {
 			long logoutUserRoomId = this.roomId;
+			UserVec.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
 			String data = "";
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
 				data += user.UserName + " ";
 			}
 			WriteAll("211", data);
-			UserVec.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
 			AppendText("사용자 " + "[" + UserName + "] 퇴장. 현재 참가자 수 " + UserVec.size());
 		}
 		
@@ -543,7 +543,7 @@ public class OmokServer extends JFrame {
 						//findRoom.omokGame 함수의 반환값
 						boolean validOmok = false;
 						//승자 판별 변수
-						boolean winner = false;
+						boolean win = false;
 						
 						for(int i=0; i<RoomVector.size(); i++) {
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
@@ -584,19 +584,29 @@ public class OmokServer extends JFrame {
 						
 						//승자 판별...
 						if(role == black) {
-							winner = findRoom.CheckOmok(1);
+							win = findRoom.CheckOmok(1);
 						}
 						else if(role == white){
-							winner = findRoom.CheckOmok(2);
+							win = findRoom.CheckOmok(2);
 						}
 						
-						if(winner) {
+						if(win) {
+							String winner = this.UserName;
+							String loser = "";
 							oos.writeObject(new ChatMsg("server", "321", "Win")); // 승자한테 이겼다고 전송
+							for(int i = 0; i < findRoom.player.size(); i++) {
+								if(this.UserName != findRoom.player.elementAt(i)) {
+									loser = findRoom.player.elementAt(i);
+								}
+							}
+							System.out.println("승자 : " + winner + " / 패자 : " + loser);
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
-								if(user!=this && cm.roomId == user.roomId) { // 나머지 찾아서 졌다고 or 게임 종료 전송
-									user.oos.writeObject(new ChatMsg("server", "322", "lose"));
-									break;
+								if(loser.equals(user.UserName)) {
+									user.oos.writeObject(new ChatMsg("server", "322", "Lose"));
+								}
+								else if(user!=this && cm.roomId == user.roomId) { // 나머지 찾아서 졌다고 or 게임 종료 전송
+									user.oos.writeObject(new ChatMsg("server", "323", "Game Over"));
 								}
 							}
 							GameOver();
