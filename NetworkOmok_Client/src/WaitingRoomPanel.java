@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.Font;
@@ -370,6 +371,7 @@ public class WaitingRoomPanel extends JPanel {
 							gamePanel.omokPanel.whitePlayerName.setText(viewerSt.nextToken());
 						}
 						
+						mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 						cardLayout.show(container, "gamePanel"); // GamePanel로 전환
 						gamePanel.roomUserList();
 						break;
@@ -507,15 +509,18 @@ public class WaitingRoomPanel extends JPanel {
 						int response4 = JOptionPane.showConfirmDialog(mainFrame, chatMsg.UserName + "님이 기권하셨습니다.\n 게임을 종료하시겠습니까?", "게임 기권", JOptionPane.YES_NO_OPTION);
 						if(response4 == JOptionPane.YES_OPTION)
 							System.exit(0);
-						else
+						else {
+							mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 							cardLayout.show(container, "waitingRoomPanel");
+						}
 						break;
 					// 게임 승리
 					case "321":
 						int response2 = JOptionPane.showConfirmDialog(mainFrame, "게임 승리!\n 게임을 종료하시겠습니까?", "게임 승리", JOptionPane.YES_NO_OPTION);
 						if (response2 == JOptionPane.YES_OPTION) { // 게임 종료
 							System.exit(0);
-						} else { // 대기실로 이동
+						} else {
+							mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 							cardLayout.show(container, "waitingRoomPanel");
 						}
 						break;
@@ -524,7 +529,8 @@ public class WaitingRoomPanel extends JPanel {
 						int response3 = JOptionPane.showConfirmDialog(mainFrame, "게임 패배!\n 게임을 종료하시겠습니까?", "게임 패배", JOptionPane.YES_NO_OPTION);
 						if (response3 == JOptionPane.YES_OPTION) { // 게임 종료
 							System.exit(0);
-						} else { // 대기실로 이동
+						} else {
+							mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 							cardLayout.show(container, "waitingRoomPanel");
 						}
 						break;
@@ -533,7 +539,8 @@ public class WaitingRoomPanel extends JPanel {
 						int response5 = JOptionPane.showConfirmDialog(mainFrame, "게임 종료!\n 게임을 종료하시겠습니까?", "게임 종료", JOptionPane.YES_NO_OPTION);
 						if (response5 == JOptionPane.YES_OPTION) { // 게임 종료
 							System.exit(0);
-						} else { // 대기실로 이동
+						} 	else {
+							mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 							cardLayout.show(container, "waitingRoomPanel");
 						}
 						break;

@@ -35,7 +35,7 @@ public class OmokClientMain extends JFrame {
 	
 	public OmokClientMain() {
 		this.setTitle("오목");
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
 		cardLayout = new CardLayout();
 		container = this.getContentPane();
@@ -45,26 +45,8 @@ public class OmokClientMain extends JFrame {
 		
 		container.add(startPanel, "startPanel");
 		
-		createMenu();
-		
 		this.setSize(900, 650);
 		this.setLocation(500, 150);
 		this.setResizable(false); // 사이즈를 조절할 수 없도록
-	}
-	
-	public void createMenu() {
-		JMenuBar menuBar = new JMenuBar();
-		
-		JMenu gameMenu = new JMenu("Game");
-		JMenuItem exit = new JMenuItem("exit");
-		exit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		gameMenu.add(exit);
-		menuBar.add(gameMenu);
-		this.setJMenuBar(menuBar);
 	}
 }
