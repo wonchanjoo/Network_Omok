@@ -420,7 +420,7 @@ public class OmokServer extends JFrame {
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
 							// task : 비밀번호 처리도 해야함
 							if(cm.roomId == omokRoom.roomId) { // 클라이언트가 보낸 roomId를 비교해 해당 방을 찾는다
-								if(omokRoom.isPassword && cm.password == omokRoom.password) {
+								if(omokRoom.isPassword && cm.password.equals(omokRoom.password)) {
 									findRoom = omokRoom;
 									break;
 								}
@@ -433,7 +433,7 @@ public class OmokServer extends JFrame {
 						} // for문 끝
 						
 						if(findRoom == null) { //비밀번호가 맞지 않는 방
-							ChatMsg obj = new ChatMsg("SERVER", "202", "방 접속 실패 : 비밀번호가 맞지 않음");
+							ChatMsg obj = new ChatMsg("SERVER", "202", "비밀번호가 맞지 않습니다.");
 							WriteOneObject(obj);
 							continue;
 						}
@@ -527,10 +527,10 @@ public class OmokServer extends JFrame {
 							ChatMsg obj = new ChatMsg("server", "210", "방 목록");
 							OmokRoom omokRoom = (OmokRoom) RoomVector.elementAt(i);
 							obj.roomId = omokRoom.roomId;
-							//obj.password = omokRoom.password;
 							obj.roomName = omokRoom.roomName;
 							obj.peopleCount = omokRoom.peopleCount;
 							obj.roomStatus = omokRoom.status;
+							obj.isPassword = omokRoom.isPassword;
 							WriteOneObject(obj);
 							System.out.println(i+1 + " : " + obj.roomId);
 							System.out.println(i+1 + " : " + obj.roomName);

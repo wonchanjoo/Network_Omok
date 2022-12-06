@@ -5,6 +5,7 @@ public class OmokRoom {
 	public long roomId;
 	public int peopleCount = 0;
 	public int status = 0;
+	public boolean isPassword = false;
 	public Vector<WaitingRoomPanel> userList = new Vector<>();
 	
 

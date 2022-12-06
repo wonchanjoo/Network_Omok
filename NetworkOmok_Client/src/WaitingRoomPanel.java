@@ -156,9 +156,16 @@ public class WaitingRoomPanel extends JPanel {
 					JOptionPane.showMessageDialog(mainFrame, "방을 선택하세요!", "error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
+				
 				OmokRoom selectedRoom = omokRooms.get(selectedIndex);
+				String password = null;
+				if(selectedRoom.isPassword) {
+					password = JOptionPane.showInputDialog(mainFrame, "비밀번호를 입력하세요.");
+				}
+				
 				ChatMsg chatMsg = new ChatMsg(userName, "201", "방 접속");
 				chatMsg.roomId = selectedRoom.roomId; // roomId
+				chatMsg.password = password;
 				System.out.println("selected roomId = " + selectedRoom.roomId);
 				sendObject(chatMsg); // roomId와 함께 방 접속 메시지 전송 
 			}
@@ -324,6 +331,7 @@ public class WaitingRoomPanel extends JPanel {
 						OmokRoom newRoom = new OmokRoom(roomId); // 새로운 방 만들기
 						newRoom.roomName = roomName;
 						newRoom.peopleCount = peopleCount;
+						newRoom.isPassword = chatMsg.isPassword;
 						omokRooms.add(newRoom); // 방 리스트에 추가
 						
 						String roomStr = String.format("%-16s%-5s%-9s", chatMsg.roomName, chatMsg.peopleCount, "게임 대기 중");
@@ -379,6 +387,7 @@ public class WaitingRoomPanel extends JPanel {
 						newRoom2.roomName = roomName2;
 						newRoom2.peopleCount = peopleCount2;
 						newRoom2.status = chatMsg.roomStatus;
+						newRoom2.isPassword = chatMsg.isPassword;
 						omokRooms.add(newRoom2); // 방 리스트에 추가
 						
 						String s = "";
