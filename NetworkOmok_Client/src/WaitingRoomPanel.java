@@ -519,9 +519,17 @@ public class WaitingRoomPanel extends JPanel {
 							cardLayout.show(container, "waitingRoomPanel");
 						}
 						break;
+					// 게임 종료
+					case "323":
+						int response5 = JOptionPane.showConfirmDialog(mainFrame, "게임 종료!\n 게임을 종료하시겠습니까?", "게임 종료", JOptionPane.YES_NO_OPTION);
+						if (response5 == JOptionPane.YES_OPTION) { // 게임 종료
+							System.exit(0);
+						} else { // 대기실로 이동
+							cardLayout.show(container, "waitingRoomPanel");
+						}
+						break;
 					// 종료된 방
 					case "325":
-						System.out.println("종료된 방의 ID = " + chatMsg.roomId);
 						long gameOverRoomId = chatMsg.roomId;
 						for(int i=0; i<omokRooms.size(); i++) {
 							OmokRoom o = omokRooms.get(i);
