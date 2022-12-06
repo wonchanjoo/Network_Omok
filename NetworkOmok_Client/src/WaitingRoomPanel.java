@@ -50,7 +50,6 @@ public class WaitingRoomPanel extends JPanel {
 	public JList<String> allUserList;
 	public DefaultListModel<String> allUserModel;
 	private CreateRoomFrame createRoomFrame;
-	public int returnFlag = 0;
 	
 	private Socket socket; // 연결 소켓
 	private ObjectInputStream ois;
@@ -249,10 +248,9 @@ public class WaitingRoomPanel extends JPanel {
 			chatMsg.role = omokPanel.role;
 			chatMsg.roomId = gamePanel.roomId;
 			oos.writeObject(chatMsg);
-			if(returnFlag == 0) {
-				omokPanel.setStatus(false);
-				chatPanel.putBtn.setEnabled(false);
-			}
+			// 착수 할 수 없는 상태로
+			omokPanel.setStatus(false);
+			chatPanel.putBtn.setEnabled(false);
 		} catch (Exception e) {
 			System.out.println("sendMousePoint error");
 		}
@@ -272,8 +270,8 @@ public class WaitingRoomPanel extends JPanel {
 	// 무르기 버튼을 클릭했을 때 실행되는 메소드
 	public void returnRequest() {
 		// 내 차례인 경우 무르기 요청을 보낼 수 없음
-		if(omokPanel.status) {
-			JOptionPane.showMessageDialog(mainFrame, "상대방의 차례일때만 무르기를 요청할 수 있습니다.", "무르기", JOptionPane.ERROR_MESSAGE);
+		if(!omokPanel.status) {
+			JOptionPane.showMessageDialog(mainFrame, "자신의 차례일때만 무르기를 요청할 수 있습니다.", "무르기", JOptionPane.ERROR_MESSAGE);
 		}
 		// 내 차례가 아니면 무르기 요청 전송
 		else {
@@ -433,9 +431,7 @@ public class WaitingRoomPanel extends JPanel {
 					// 서버로부터 계산된 마우스 이벤트
 					case "301":
 						omokPanel.putStone(chatMsg.point.x, chatMsg.point.y, chatMsg.role);
-						if(returnFlag == 1)
-							returnFlag = 0;
-						else if(chatMsg.role == omokPanel.role) // 내가 보낸 좌표면
+						if(chatMsg.role == omokPanel.role) // 내가 보낸 좌표면
 							omokPanel.setStatus(false); // 내 차례가 아니므로 false
 						else if(chatMsg.role != omokPanel.role && omokPanel.role != chatMsg.view){ // 상대방이 보낸 좌표면
 							omokPanel.setStatus(true); // 내 차례므로 true
@@ -469,20 +465,27 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 무르기 허용
 					case "311":
+						// 무르기 된 바둑돌 제거
 						if(chatMsg.role == chatMsg.black)
 							omokPanel.remove(omokPanel.oldBlackStone);
 						else if(chatMsg.role == chatMsg.white)
 							omokPanel.remove(omokPanel.oldWhiteStone);
 						omokPanel.repaint();
 						
+						// 자신이 무르기를 요청한 플레이어라면
 						if(chatMsg.role != omokPanel.role && omokPanel.role != omokPanel.view) {
 							JOptionPane.showMessageDialog(mainFrame, "상대방이 무르기를 허용 했습니다.", "무르기", JOptionPane.PLAIN_MESSAGE);
-							returnFlag = 1;
+							// 착수 할 수 없는 상태로
+							omokPanel.setStatus(false);
+							chatPanel.putBtn.setEnabled(false);
 						}
 						
+						// 자신이 무르기를 허용한 플레이어라면
 						if(chatMsg.role == omokPanel.role) {
 							JOptionPane.showMessageDialog(mainFrame, "다시 착수하세요!", "무르기", JOptionPane.PLAIN_MESSAGE);
-							returnFlag = 1; // 한번 더 착수할 수 있도록 flag = 1;
+							// 착수 할 수 있는 상태로
+							omokPanel.setStatus(true);
+							chatPanel.putBtn.setEnabled(true);
 						}
 						break;
 					// 무르기 거절
