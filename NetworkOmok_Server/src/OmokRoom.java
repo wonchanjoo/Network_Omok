@@ -80,7 +80,7 @@ public class OmokRoom {
 		boolean samsam = false;
 		
 		if(board[boardX][boardY] != 0) {
-			data = "location error";
+			data = "location error : 이미 바둑돌이 있습니다.";
 			return false;
 		}
 		
@@ -89,7 +89,7 @@ public class OmokRoom {
 		}
 		
 		if(samsam) {
-			data = "삼삼입니다";
+			data = "33으로 둘 수 없습니다.";
 			return false;
 		}
 		
