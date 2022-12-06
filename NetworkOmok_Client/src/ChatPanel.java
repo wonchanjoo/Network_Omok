@@ -38,11 +38,12 @@ public class ChatPanel extends JPanel{
 	public ChatPanel(WaitingRoomPanel waitingRoomPanel) {
 		this.waitingRoomPanel = waitingRoomPanel;
 		this.setLayout(null);
-		this.setBackground(Color.LIGHT_GRAY);
+		this.setBackground(new Color(233, 211, 180));
 		
 		// 접속자 리스트
 			roomUserModel = new DefaultListModel<>();
 			userList = new JList<String>(roomUserModel);
+			userList.setFont(new Font("굴림", Font.BOLD, 15));
 			userList.setBounds(5, 5, 315, 230);
 			this.add(userList);
 			

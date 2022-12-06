@@ -449,7 +449,7 @@ public class WaitingRoomPanel extends JPanel {
 						break;
 					// 착수 거부
 					case "302":
-						JOptionPane.showMessageDialog(mainFrame, "해당 위치에 착수할 수 없습니다.", "Message", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(mainFrame, chatMsg.data, "Message", JOptionPane.ERROR_MESSAGE);
 						omokPanel.setStatus(true);
 						chatPanel.putBtn.setEnabled(true);
 						break;

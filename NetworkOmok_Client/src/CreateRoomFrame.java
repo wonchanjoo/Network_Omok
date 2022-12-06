@@ -41,8 +41,8 @@ public class CreateRoomFrame extends JFrame{
 		
 		// 방 이름
 		JLabel roomName = new JLabel("방 이름");
-		roomName.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		roomName.setBounds(120, 50, 60, 30);
+		roomName.setFont(new Font("굴림", Font.BOLD, 15));
+		roomName.setBounds(110, 50, 60, 30);
 		container.add(roomName);
 		
 		inputRoomName = new JTextField();
@@ -52,8 +52,8 @@ public class CreateRoomFrame extends JFrame{
 		
 		// 비밀번호
 		JLabel password = new JLabel("비밀번호");
-		password.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		password.setBounds(120, 120, 60, 30);
+		password.setFont(new Font("굴림", Font.BOLD, 15));
+		password.setBounds(110, 120, 80, 30);
 		container.add(password);
 		
 		passwordCheckBox = new JCheckBox();
@@ -76,8 +76,8 @@ public class CreateRoomFrame extends JFrame{
 		
 		// 인원 수
 		JLabel peopleCount = new JLabel("인원 수");
-		peopleCount.setFont(new Font("맑은 고딕", Font.PLAIN, 15));
-		peopleCount.setBounds(120, 190, 60, 30);
+		peopleCount.setFont(new Font("굴림", Font.BOLD, 15));
+		peopleCount.setBounds(110, 190, 60, 30);
 		container.add(peopleCount);
 		
 		int[] arr = new int[20];

@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 public class OmokClientMain extends JFrame {
 	private CardLayout cardLayout;
@@ -28,7 +29,7 @@ public class OmokClientMain extends JFrame {
 	
 	public OmokClientMain() {
 		this.setTitle("오목");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
 		cardLayout = new CardLayout();
 		container = this.getContentPane();
