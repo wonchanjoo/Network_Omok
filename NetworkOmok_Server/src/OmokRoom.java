@@ -37,6 +37,7 @@ public class OmokRoom {
 		}
 	}
 	
+	//현재 오목 배열을 콘솔에 출력
 	public void DisplayOmok() {
 		System.out.println("[" + this.roomName + "]" + "방의 현재 오목 배열");
 		System.out.println("-------------------------------------");
@@ -74,16 +75,19 @@ public class OmokRoom {
 		return false;
 	}
 	
+	//좌표가 들어오면 오목게임 계산
 	public boolean omokGame(Point point, int role) {
 		int boardX = (point.x-24)/27;
 		int boardY = (point.y-97)/27;
 		boolean samsam = false;
 		
+		//이미 바둑돌이 있는 곳에 착수를 한 경우
 		if(board[boardX][boardY] != 0) {
 			data = "location error : 이미 바둑돌이 있습니다.";
 			return false;
 		}
 		
+		//흑돌이면 33 검사
 		if(role == black) {
 			samsam = SamSamRule(boardX, boardY);
 		}
@@ -120,6 +124,7 @@ public class OmokRoom {
 		board[boardX][boardY] = 0;
 	}
 	
+	//33 검사
 	public boolean SamSamRule(int boardX, int boardY) {
 		int count = 0;
 		count += find1(boardX, boardY);
