@@ -6,6 +6,7 @@ import java.util.Vector;
 
 public class ChatMsg implements Serializable {
 	private static final long serialVersionUID = 1L;
+	//role 정수값
 	public final int black = 0;
 	public final int white = 1;
 	public final int watch = 2;
