@@ -650,16 +650,10 @@ public class OmokServer extends JFrame {
 						for(int i=0; i<user_vc.size(); i++) {
 							UserService u = (OmokServer.UserService) user_vc.get(i);
 							if(u.roomId == cm.roomId)
-								//u.WriteOne("410", data);
 								u.WriteOneObject(new ChatMsg("SERVER", "410", data));
 						}
 					}
-
-//					else if (cm.code.matches("600")) { // logout
-//						Logout();
-//						break;
-//					}
-				else { // 300, 500, ... 기타 object는 모두 방송한다.
+				else { // 기타 object는 모두 방송한다.
 						WriteAllObject(cm);
 					} 
 				} catch (IOException e) {
